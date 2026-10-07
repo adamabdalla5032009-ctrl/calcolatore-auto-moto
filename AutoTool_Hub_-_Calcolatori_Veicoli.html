@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="it" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoTool Hub - Calcolatori Auto e Moto Gratuiti</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#00f0ff',
+                            orange: '#ff6b00',
+                            dark: '#0f172a',
+                            card: '#1e293b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+            color: #f8fafc;
+        }
+        .neon-glow-blue {
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+        }
+        .neon-glow-orange {
+            box-shadow: 0 0 15px rgba(255, 107, 0, 0.25);
+        }
+        .border-gradient {
+            border-image: linear-gradient(to right, #00f0ff, #ff6b00) 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased">
+
+    <!-- Header / Navigation -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-gradient-to-tr from-cyan-500 to-orange-500 rounded-xl text-slate-950 font-black text-xl">
+                    <i class="fa-solid fa-gauge-high"></i>
+                </div>
+                <span class="text-xl sm:text-2xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-400 to-orange-500 bg-clip-text text-transparent">
+                    AutoTool<span class="text-white">Hub</span>
+                </span>
+            </div>
+            <nav class="hidden md:flex space-x-6 text-sm font-medium text-slate-300">
+                <a href="#pneumatici" class="hover:text-cyan-400 transition-colors">Pneumatici</a>
+                <a href="#neopatentati" class="hover:text-cyan-400 transition-colors">Neopatentati</a>
+                <a href="#miscela" class="hover:text-cyan-400 transition-colors">Miscela 2T</a>
+                <a href="#guida-adsense" class="hover:text-orange-400 transition-colors">Guida Monetizzazione</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="relative py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 text-xs font-semibold mb-6">
+            <i class="fa-solid fa-bolt"></i> Calcoli Istantanei & Precisione Normativa
+        </div>
+        <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4">
+            Strumenti Digitali per <span class="bg-gradient-to-r from-cyan-400 via-teal-300 to-orange-400 bg-clip-text text-transparent">Appassionati Auto e Moto</span>
+        </h1>
+        <p class="max-w-2xl mx-auto text-slate-400 text-sm sm:text-base mb-8">
+            Calcola la tolleranza dei tuoi pneumatici, la legalità per i neopatentati e il dosaggio della miscela 2T in pochi millisecondi.
+        </p>
+    </section>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-12">
+
+        <!-- Grid of 3 Calculators -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Tool 1: Pneumatici -->
+            <section id="pneumatici" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300 neon-glow-blue">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="p-3 bg-cyan-500/10 text-cyan-400 rounded-lg">
+                            <i class="fa-solid fa-compact-disc text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-white">Equivalenza Pneumatici</h2>
+                            <p class="text-xs text-slate-400">Verifica la tolleranza diametro (±5%)</p>
+                        </div>
+                    </div>
+
+                    <!-- Input Form -->
+                    <div class="space-y-4">
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-semibold text-cyan-400 mb-2">Misura Originale (Libretto)</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <span class="text-[10px] text-slate-400">Larghezza</span>
+                                    <input type="number" id="tire-w1" value="205" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-cyan-400">
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400">Spalla (%)</span>
+                                    <input type="number" id="tire-a1" value="55" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-cyan-400">
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400">Cerchio (")</span>
+                                    <input type="number" id="tire-r1" value="16" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-cyan-400">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-semibold text-orange-400 mb-2">Nuova Misura Desiderata</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <span class="text-[10px] text-slate-400">Larghezza</span>
+                                    <input type="number" id="tire-w2" value="225" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-orange-400">
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400">Spalla (%)</span>
+                                    <input type="number" id="tire-a2" value="45" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-orange-400">
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400">Cerchio (")</span>
+                                    <input type="number" id="tire-r2" value="17" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-orange-400">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="mt-6 pt-4 border-t border-slate-800">
+                    <div id="tire-result" class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-center">
+                        <!-- JS Dynamic output -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tool 2: Neopatentati -->
+            <section id="neopatentati" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between hover:border-orange-500/40 transition-all duration-300 neon-glow-orange">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="p-3 bg-orange-500/10 text-orange-400 rounded-lg">
+                            <i class="fa-solid fa-id-card text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-white">Rapporto Neopatentati</h2>
+                            <p class="text-xs text-slate-400">Normativa Codice della Strada</p>
+                        </div>
+                    </div>
+
+                    <!-- Form Inputs -->
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">Potenza del Veicolo (kW)</label>
+                            <input type="number" id="neo-kw" value="50" step="0.1" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-orange-400">
+                            <span class="text-[10px] text-slate-500 mt-1 block">Opzionale: inserisci i Cavalli (CV) sotto per auto-calcolare i kW</span>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">Potenza in CV (Opzionale)</label>
+                            <input type="number" id="neo-cv" placeholder="es. 75" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-orange-400">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">Tara del Veicolo (kg)</label>
+                            <input type="number" id="neo-kg" value="1100" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-orange-400">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="mt-6 pt-4 border-t border-slate-800">
+                    <div id="neo-result" class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-center">
+                        <!-- JS Dynamic Output -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tool 3: Miscela 2T -->
+            <section id="miscela" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300 neon-glow-blue">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="p-3 bg-cyan-500/10 text-cyan-400 rounded-lg">
+                            <i class="fa-solid fa-oil-can text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-white">Calcolatore Miscela 2T</h2>
+                            <p class="text-xs text-slate-400">Dosaggio esatto Olio / Benzina</p>
+                        </div>
+                    </div>
+
+                    <!-- Form Inputs -->
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">Litri di Benzina (L)</label>
+                            <input type="number" id="oil-liters" value="5" step="0.5" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-cyan-400">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-xs font-medium text-slate-300">Percentuale Olio (%)</label>
+                                <span id="oil-perc-val" class="text-xs font-bold text-cyan-400">2.0 %</span>
+                            </div>
+                            <input type="range" id="oil-perc" min="1.0" max="5.0" step="0.1" value="2.0" class="w-full accent-cyan-400 cursor-pointer">
+                            <div class="flex justify-between text-[10px] text-slate-500">
+                                <span>1% (Leggero)</span>
+                                <span>2% (Standard)</span>
+                                <span>3% (Pista/Cross)</span>
+                                <span>5% (Rodaggio)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="mt-6 pt-4 border-t border-slate-800">
+                    <div id="oil-result" class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-center">
+                        <!-- JS Dynamic Output -->
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Monetization & Deployment Guide -->
+        <section id="guida-adsense" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 mt-12">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="p-3 bg-orange-500/10 text-orange-400 rounded-xl">
+                        <i class="fa-solid fa-rocket text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-white">Passaggi per Pubblicare e Monetizzare</h2>
+                        <p class="text-sm text-slate-400">Come trasformare questo codice in un sito web attivo e approvato da Google AdSense</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+
+                    <!-- Step 1 -->
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+                        <div class="flex items-center space-x-2 text-cyan-400 font-bold mb-2">
+                            <span class="w-6 h-6 rounded-full bg-cyan-950 border border-cyan-500/40 flex items-center justify-center text-xs">1</span>
+                            <h3>Acquisto Dominio & Hosting Gratuito</h3>
+                        </div>
+                        <ul class="text-slate-400 space-y-2 list-disc list-inside text-xs leading-relaxed">
+                            <li>Acquista un dominio economico su Namecheap o Serverplan (es. <i>autotoolhub.it</i> o <i>calcolatoreauto.it</i> a circa 10€/anno).</li>
+                            <li>Carica questo file gratis su <b>Vercel</b>, <b>Netlify</b> o <b>GitHub Pages</b> associando il tuo dominio personalizzato.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+                        <div class="flex items-center space-x-2 text-cyan-400 font-bold mb-2">
+                            <span class="w-6 h-6 rounded-full bg-cyan-950 border border-cyan-500/40 flex items-center justify-center text-xs">2</span>
+                            <h3>Requisiti Approvazione AdSense</h3>
+                        </div>
+                        <ul class="text-slate-400 space-y-2 list-disc list-inside text-xs leading-relaxed">
+                            <li>Aggiungi 3 pagine legali fondamentali: <i>Privacy Policy</i>, <i>Cookie Policy</i> e <i>Termini di Servizio</i> (usa Iubenda o generatori gratuiti).</li>
+                            <li>Scrivi un breve testo descrittivo da 300 parole sotto ogni calcolatore spiegando la teoria delle formule (Google vuole contenuti testuali).</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+                        <div class="flex items-center space-x-2 text-orange-400 font-bold mb-2">
+                            <span class="w-6 h-6 rounded-full bg-orange-950 border border-orange-500/40 flex items-center justify-center text-xs">3</span>
+                            <h3>Strategia di Traffico (50.000 vis/mese)</h3>
+                        </div>
+                        <ul class="text-slate-400 space-y-2 list-disc list-inside text-xs leading-relaxed">
+                            <li><b>TikTok / Instagram Reels:</b> Crea video brevi dimostrativi (es. <i>"Calcola se la tua auto è legale prima di comprare i cerchi da 18"</i>).</li>
+                            <li><b>Forum & Community:</b> Condividi il link nei gruppi Facebook di motori e tuning come risorsa utile.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+                        <div class="flex items-center space-x-2 text-orange-400 font-bold mb-2">
+                            <span class="w-6 h-6 rounded-full bg-orange-950 border border-orange-500/40 flex items-center justify-center text-xs">4</span>
+                            <h3>Integrazione Banner AdSense</h3>
+                        </div>
+                        <ul class="text-slate-400 space-y-2 list-disc list-inside text-xs leading-relaxed">
+                            <li>Crea un account su <a href="https://www.google.com/adsense/" target="_blank" class="text-cyan-400 underline">Google AdSense</a>.</li>
+                            <li>Incolla lo snippet JS di AdSense tra i tag <code class="text-cyan-400">&lt;head&gt;</code> e inserisci 2 banner (uno sotto l'hero ed uno prima del footer).</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-900/60 mt-12 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>© 2026 AutoTool Hub - Tutti i calcoli hanno valore puramente indicativo e informativo.</p>
+        </div>
+    </footer>
+
+    <!-- Application Logic Javascript -->
+    <script>
+        // -------------------------------------------------------------
+        // 1. CALCULATOR: PNEUMATICI & CERCHI
+        // -------------------------------------------------------------
+        function calcTires() {
+            const w1 = parseFloat(document.getElementById('tire-w1').value) || 0;
+            const a1 = parseFloat(document.getElementById('tire-a1').value) || 0;
+            const r1 = parseFloat(document.getElementById('tire-r1').value) || 0;
+
+            const w2 = parseFloat(document.getElementById('tire-w2').value) || 0;
+            const a2 = parseFloat(document.getElementById('tire-a2').value) || 0;
+            const r2 = parseFloat(document.getElementById('tire-r2').value) || 0;
+
+            const resDiv = document.getElementById('tire-result');
+
+            if (!w1 || !a1 || !r1 || !w2 || !a2 || !r2) {
+                resDiv.innerHTML = `<span class="text-slate-400 text-xs">Inserisci tutti i valori per confrontare.</span>`;
+                return;
+            }
+
+            // Diameter formula: (Rim * 25.4) + 2 * (Width * Aspect / 100)
+            const d1 = (r1 * 25.4) + (2 * (w1 * a1 / 100));
+            const d2 = (r2 * 25.4) + (2 * (w2 * a2 / 100));
+
+            const diffMm = d2 - d1;
+            const diffPerc = ((d2 - d1) / d1) * 100;
+            const isLegal = Math.abs(diffPerc) <= 5.0;
+
+            resDiv.innerHTML = `
+                <div class="flex justify-between text-xs mb-1">
+                    <span class="text-slate-400">Diametro Orig. / Nuovo:</span>
+                    <span class="font-bold text-white">${d1.toFixed(1)} mm / ${d2.toFixed(1)} mm</span>
+                </div>
+                <div class="flex justify-between text-xs mb-2">
+                    <span class="text-slate-400">Scarto Diametro:</span>
+                    <span class="font-bold ${diffPerc >= 0 ? 'text-cyan-400' : 'text-orange-400'}">${diffMm > 0 ? '+' : ''}${diffMm.toFixed(1)} mm (${diffPerc > 0 ? '+' : ''}${diffPerc.toFixed(2)}%)</span>
+                </div>
+                <div class="p-2 rounded-lg text-xs font-bold ${isLegal ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800' : 'bg-rose-950/80 text-rose-400 border border-rose-800'}">
+                    ${isLegal ? '<i class="fa-solid fa-circle-check"></i> Tolleranza Rispettata (±5%)' : '<i class="fa-solid fa-triangle-exclamation"></i> Fuori Tolleranza Legale (>5%)'}
+                </div>
+            `;
+        }
+
+        // Attach Tire Listeners
+        ['tire-w1', 'tire-a1', 'tire-r1', 'tire-w2', 'tire-a2', 'tire-r2'].forEach(id => {
+            document.getElementById(id).addEventListener('input', calcTires);
+        });
+
+        // -------------------------------------------------------------
+        // 2. CALCULATOR: NEOPATENTATI
+        // -------------------------------------------------------------
+        function calcNeo() {
+            const kwInput = document.getElementById('neo-kw');
+            const cvInput = document.getElementById('neo-cv');
+            const kgInput = document.getElementById('neo-kg');
+            const resDiv = document.getElementById('neo-result');
+
+            let kw = parseFloat(kwInput.value) || 0;
+            const kg = parseFloat(kgInput.value) || 0;
+
+            if (kg <= 0) {
+                resDiv.innerHTML = `<span class="text-slate-400 text-xs">Inserisci la tara del veicolo in kg.</span>`;
+                return;
+            }
+
+            // Power-to-weight ratio in kW/ton (kW / (kg / 1000))
+            const kwTonne = kw / (kg / 1000);
+
+            // Italian Regulation Limits:
+            // Max 55 kW/t (Power/Weight ratio) AND Max 70 kW absolute power limit
+            const limitKwTonne = 55.0;
+            const limitMaxKw = 70.0;
+
+            const isKwTonneLegal = kwTonne <= limitKwTonne;
+            const isMaxKwLegal = kw <= limitMaxKw;
+            const isLegal = isKwTonneLegal && isMaxKwLegal;
+
+            resDiv.innerHTML = `
+                <div class="flex justify-between text-xs mb-1">
+                    <span class="text-slate-400">Rapporto Potenza/Peso:</span>
+                    <span class="font-bold text-white">${kwTonne.toFixed(2)} kW/t <span class="text-[10px] text-slate-500">(max 55)</span></span>
+                </div>
+                <div class="flex justify-between text-xs mb-2">
+                    <span class="text-slate-400">Potenza Assoluta:</span>
+                    <span class="font-bold text-white">${kw.toFixed(1)} kW <span class="text-[10px] text-slate-500">(max 70 kW)</span></span>
+                </div>
+                <div class="p-2 rounded-lg text-xs font-bold ${isLegal ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800' : 'bg-rose-950/80 text-rose-400 border border-rose-800'}">
+                    ${isLegal ? '<i class="fa-solid fa-circle-check"></i> Idonea per Neopatentati' : '<i class="fa-solid fa-ban"></i> NON Guidabile da Neopatentati'}
+                </div>
+            `;
+        }
+
+        // Auto-convert CV to kW if CV changes
+        document.getElementById('neo-cv').addEventListener('input', (e) => {
+            const cv = parseFloat(e.target.value);
+            if (cv && cv > 0) {
+                document.getElementById('neo-kw').value = (cv * 0.735499).toFixed(1);
+            }
+            calcNeo();
+        });
+
+        document.getElementById('neo-kw').addEventListener('input', () => {
+            document.getElementById('neo-cv').value = '';
+            calcNeo();
+        });
+        document.getElementById('neo-kg').addEventListener('input', calcNeo);
+
+        // -------------------------------------------------------------
+        // 3. CALCULATOR: MISCELA 2 TEMPI
+        // -------------------------------------------------------------
+        function calcOil() {
+            const liters = parseFloat(document.getElementById('oil-liters').value) || 0;
+            const perc = parseFloat(document.getElementById('oil-perc').value) || 2.0;
+            const resDiv = document.getElementById('oil-result');
+
+            document.getElementById('oil-perc-val').innerText = `${perc.toFixed(1)} %`;
+
+            if (liters <= 0) {
+                resDiv.innerHTML = `<span class="text-slate-400 text-xs">Inserisci i litri di benzina.</span>`;
+                return;
+            }
+
+            // Calculation: Liters * 1000 * (perc / 100) = ml of oil
+            const oilMl = (liters * 1000) * (perc / 100);
+
+            resDiv.innerHTML = `
+                <div class="text-center">
+                    <span class="text-slate-400 text-xs block">Olio necessario da aggiungere:</span>
+                    <span class="text-2xl font-black bg-gradient-to-r from-cyan-400 to-orange-400 bg-clip-text text-transparent my-1 block">
+                        ${oilMl.toFixed(0)} ml / ${(oilMl / 1000).toFixed(2)} L
+                    </span>
+                    <span class="text-[10px] text-slate-500">Per ${liters} Litri di benzina al ${perc.toFixed(1)}%</span>
+                </div>
+            `;
+        }
+
+        document.getElementById('oil-liters').addEventListener('input', calcOil);
+        document.getElementById('oil-perc').addEventListener('input', calcOil);
+
+        // Initial Calculation Run on Page Load
+        window.onload = function() {
+            calcTires();
+            calcNeo();
+            calcOil();
+        };
+    </script>
+</body>
+</html>
