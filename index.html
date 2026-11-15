@@ -84,7 +84,7 @@
 
         nav button {
             flex: 1;
-            min-width: 120px;
+            min-width: 110px;
             padding: 14px 10px;
             background: none;
             border: none;
@@ -93,7 +93,8 @@
             color: var(--muted);
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
         }
 
         nav button.active {
@@ -260,6 +261,33 @@
         .text-success { color: var(--success); }
         .text-danger { color: var(--danger); }
         .empty-msg { color: var(--muted); font-style: italic; padding: 15px 0; text-align: center; }
+
+        /* Stili per la Guida */
+        .guide-step {
+            background: #f8fafc;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        .guide-step h3 {
+            font-size: 1rem;
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+        }
+        .guide-step p {
+            font-size: 0.9rem;
+            color: var(--muted);
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+        .guide-example {
+            background: #fff;
+            padding: 10px;
+            border: 1px dashed var(--border);
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
     </style>
 </head>
 <body>
@@ -267,6 +295,7 @@
 <header>
     <h1>🏗️ Cantiere<span>Pro</span></h1>
     <div class="backup-btns">
+        <button class="btn-small" onclick="caricaDatiEsempio()">💡 Carica Dati Esempio</button>
         <button class="btn-small" onclick="esportaDati()">⬇️ Salva Backup</button>
         <button class="btn-small" onclick="document.getElementById('importFile').click()">⬆️ Ripristina</button>
         <input type="file" id="importFile" style="display:none" accept=".json" onchange="importaDati(event)">
@@ -278,6 +307,7 @@
     <button onclick="cambiaTab('ore', this)">⏱️ Segna Ore</button>
     <button onclick="cambiaTab('cantieri', this)">🏢 Cantieri & Utili</button>
     <button onclick="cambiaTab('operai', this)">👷 Operai & Scadenze</button>
+    <button onclick="cambiaTab('guida', this)">📖 Guida & Esempi</button>
 </nav>
 
 <div class="container">
@@ -412,7 +442,7 @@
             </div>
 
             <div class="card">
-                <h2>➕ Aggiungi Spesa Materiali a Cantiere</h2>
+                <h2>➕ Aggiungi Spesa Materiale a Cantiere</h2>
                 <form onsubmit="aggiungiSpesaMateriale(event)">
                     <div class="form-group">
                         <label>Seleziona Cantiere</label>
@@ -534,6 +564,51 @@
         </div>
     </div>
 
+    <!-- TAB 5: GUIDA E SPIEGAZIONE GUIDATA -->
+    <div id="guida" class="section">
+        <div class="card">
+            <h2>📖 Guida Completa e Spiegazione Guidata</h2>
+            <p style="margin-bottom: 20px; color: var(--muted);">Benvenuto in CantierePro. Questa guida ti spiega passo dopo passo come sfruttare ogni sezione dell'applicazione per gestire la tua impresa edile, tenere d'occhio i guadagni e rispettare le normative sulla sicurezza.</p>
+            
+            <div class="guide-step">
+                <h3>1. Inserire gli Operai e il Costo Orario</h3>
+                <p>Prima di registrare le ore, vai nella scheda <strong>Operai & Scadenze</strong> e inserisci i tuoi dipendenti specificando il loro costo orario aziendale (es. 22€/h). Questo costo serve al sistema per calcolare automaticamente quanto costa all'impresa ogni singola ora lavorata in cantiere.</p>
+                <div class="guide-example">
+                    <strong>💡 Esempio pratico:</strong> Inserisci <em>Mario Rossi</em> come <em>Muratore</em> con costo orario <em>22,00 €</em>.
+                </div>
+            </div>
+
+            <div class="guide-step">
+                <h3>2. Creare un Cantiere e Fissare il Budget</h3>
+                <p>Vai su <strong>Cantieri & Utili</strong> e crea il cantiere inserendo il nome del cliente/lavoro e il preventivo totale pattuito (il ricavo che riceverai a fine opera).</p>
+                <div class="guide-example">
+                    <strong>💡 Esempio pratico:</strong> Crea il cantiere <em>Ristrutturazione Appartamento Verdi</em> con un ricavo pattuito di <em>15.000,00 €</em>.
+                </div>
+            </div>
+
+            <div class="guide-step">
+                <h3>3. Registrare le Ore e i Materiali (Calcolo Automatico Utile/Perdita)</h3>
+                <p>Ogni volta che si lavora, vai su <strong>Segna Ore</strong>, seleziona la data, il cantiere, l'operaio e inserisci le ore svolte. Il sistema calcola il costo della manodopera in tempo reale. Se compri materiali (es. sacchi di cemento, piastrelle), vai su <strong>Cantieri & Utili</strong> e aggiungi la spesa.</p>
+                <div class="guide-example">
+                    <strong>💡 Esempio pratico:</strong> Mario Rossi lavora 8 ore su Appartamento Verdi. Il sistema calcola 8h × 22€ = <em>176,00 €</em> di manodopera aggiunti automaticamente ai costi di quel cantiere.
+                </div>
+            </div>
+
+            <div class="guide-step">
+                <h3>4. Monitorare le Scadenze dei Documenti</h3>
+                <p>Nella scheda <strong>Operai & Scadenze</strong> puoi registrare le scadenze critiche (visite mediche, corsi sicurezza art. 37, patentini gru). Il sistema ti avviserà in automatico nella <strong>Dashboard</strong> principale colorandosi di giallo (se scade entro 30 giorni) o di rosso (se già scaduto).</p>
+                <div class="guide-example">
+                    <strong>💡 Esempio pratico:</strong> Registra la "Visita Medica" di Mario Rossi con scadenza tra 10 giorni. Apparirà subito l'allerta in cima alla schermata principale per evitare multe in cantiere.
+                </div>
+            </div>
+
+            <div class="guide-step">
+                <h3>5. Prova Subito con un Clic!</h3>
+                <p>Se vuoi vedere subito il programma popolato di dati realistici senza dover inserire tutto a mano, clicca sul pulsante in alto a destra <strong>"💡 Carica Dati Esempio"</strong>. Potrai testare subito grafici, bilanci e scadenze.</p>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -568,6 +643,47 @@
         if (!dataStr) return '';
         const [y, m, d] = dataStr.split('-');
         return `${d}/${m}/${y}`;
+    }
+
+    // --- FUNZIONE DATI DI ESEMPIO ---
+    function caricaDatiEsempio() {
+        if (!confirm('Vuoi caricare dati di esempio realistici per testare tutte le funzioni?')) return;
+        
+        const oggi = new Date();
+        const dataStr = oggi.toISOString().slice(0,10);
+        
+        // Data passata per scadenza
+        const dataScaduta = new Date();
+        dataScaduta.setDate(oggi.getDate() - 5);
+        
+        // Data vicina alla scadenza (tra 10 giorni)
+        const dataImminente = new Date();
+        dataImminente.setDate(oggi.getDate() + 10);
+
+        db = {
+            operai: [
+                { id: 101, nome: "Marco Bianchi", ruolo: "Capocantiere", costoOrario: 25.00 },
+                { id: 102, nome: "Giuseppe Neri", ruolo: "Muratore Specializzato", costoOrario: 22.00 },
+                { id: 103, nome: "Luca Rossi", ruolo: "Manovale", costoOrario: 18.00 }
+            ],
+            cantieri: [
+                { id: 201, nome: "Ristrutturazione Villa Rossi", ricavo: 28000.00, materiali: 4200.00 },
+                { id: 202, nome: "Costruzione Box Auto Via Roma", ricavo: 14500.00, materiali: 3100.00 }
+            ],
+            ore: [
+                { id: 301, data: dataStr, cantiereId: 201, operaioId: 101, ore: 8, costoTotale: 200.00, note: "Direzione lavori e tracciamento" },
+                { id: 302, data: dataStr, cantiereId: 201, operaioId: 102, ore: 8, costoTotale: 176.00, note: "Posa tramezzi in mattone" },
+                { id: 303, data: dataStr, cantiereId: 202, operaioId: 103, ore: 6, costoTotale: 108.00, note: "Scavo e pulizia area" }
+            ],
+            documenti: [
+                { id: 401, operaioId: 101, tipo: "Visita Medica / Idoneità", scadenza: dataImminente.toISOString().slice(0,10) },
+                { id: 402, operaioId: 102, tipo: "Corso Sicurezza (Art. 37)", scadenza: dataScaduta.toISOString().slice(0,10) },
+                { id: 403, operaioId: 103, tipo: "Patentino Gru / Mezzi", scadenza: "2027-12-31" }
+            ]
+        };
+
+        salvaDB();
+        alert('Dati di esempio caricati con successo! Esplora le varie schede per vederli in azione.');
     }
 
     // --- OPERAI ---
@@ -842,4 +958,3 @@
 
 </body>
 </html>
-
