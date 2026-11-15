@@ -1,479 +1,845 @@
 <!DOCTYPE html>
-<html lang="it" class="scroll-smooth">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Immobiliarenext | Compra e Vendi Immobili</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                        }
-                    }
-                }
+    <title>CantierePro - Gestione Cantieri, Ore e Scadenze</title>
+    <style>
+        :root {
+            --primary: #ea580c;
+            --primary-dark: #c2410c;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --text: #1e293b;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #d97706;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding-bottom: 40px;
+        }
+
+        header {
+            background-color: #0f172a;
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        header h1 {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        header h1 span {
+            color: var(--primary);
+        }
+
+        .backup-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            background: #334155;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .btn-small:hover {
+            background: #475569;
+        }
+
+        nav {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            overflow-x: auto;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        nav button {
+            flex: 1;
+            min-width: 120px;
+            padding: 14px 10px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        nav button.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: #fff7ed;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
             }
         }
-    </script>
+
+        .card {
+            background: var(--card);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 1.15rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 11px 18px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            font-size: 0.95rem;
+            margin-top: 5px;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-danger {
+            background: #fee2e2;
+            color: var(--danger);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #f8fafc;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .badge-ok { background: #dcfce7; color: var(--success); }
+        .badge-warn { background: #fef3c7; color: var(--warning); }
+        .badge-danger { background: #fee2e2; color: var(--danger); }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .kpi-box {
+            background: white;
+            padding: 18px;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .kpi-box span {
+            font-size: 0.85rem;
+            color: var(--muted);
+            display: block;
+        }
+
+        .kpi-box strong {
+            font-size: 1.5rem;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
+        .empty-msg { color: var(--muted); font-style: italic; padding: 15px 0; text-align: center; }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans antialiased flex flex-col min-h-screen">
+<body>
 
-    <!-- HEADER / NAVBAR -->
-    <header class="bg-white shadow-sm sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="bg-brand-600 text-white p-2.5 rounded-xl text-xl font-bold flex items-center justify-center shadow-md">
-                    <i class="fa-solid fa-house-chimney"></i>
-                </div>
-                <div>
-                    <span class="text-xl font-extrabold tracking-tight text-gray-900">Immobiliare<span class="text-brand-600">next</span></span>
-                    <span class="block text-xs text-gray-500 font-medium">Compra, Vendi e Trova Casa</span>
-                </div>
-            </div>
-            
-            <nav class="hidden md:flex items-center space-x-8 font-medium text-sm text-gray-600">
-                <a href="#catalogo" class="hover:text-brand-600 transition">Immobili</a>
-                <a href="#vendi" class="hover:text-brand-600 transition">Vendi Casa</a>
-                <a href="#chi-siamo" class="hover:text-brand-600 transition">Chi Siamo</a>
-                <a href="#contatti" class="hover:text-brand-600 transition">Contatti</a>
-            </nav>
-
-            <div class="flex items-center space-x-4">
-                <button onclick="openPublishModal()" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm shadow-md transition flex items-center gap-2">
-                    <i class="fa-solid fa-plus"></i> Pubblica Annuncio
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- HERO SECTION -->
-    <section class="relative bg-gradient-to-r from-gray-900 via-gray-800 to-brand-700 text-white py-24 px-4 sm:px-6 lg:px-8">
-        <div class="absolute inset-0 opacity-25 bg-[radial-gradient(#2563eb_1px,transparent_1px)] [background-size:16px_16px]"></div>
-        <div class="max-w-4xl mx-auto text-center relative z-10">
-            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight mb-6">
-                Trova la casa dei tuoi sogni o vendi al miglior prezzo.
-            </h1>
-            <p class="text-lg sm:text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
-                La piattaforma moderna e veloce per inserire annunci immobiliari gratuiti o trovare la soluzione ideale in tutta Italia.
-            </p>
-
-            <!-- SEARCH FILTER BAR -->
-            <div class="bg-white p-4 rounded-2xl shadow-2xl text-gray-800 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div class="text-left px-3 py-2 bg-gray-50 rounded-xl border border-gray-200">
-                    <label class="block text-xs font-bold text-gray-500 uppercase">Città o Zona</label>
-                    <input type="text" id="searchLocation" placeholder="Es. Milano, Roma..." class="w-full bg-transparent outline-none text-sm font-semibold text-gray-800 mt-0.5">
-                </div>
-                <div class="text-left px-3 py-2 bg-gray-50 rounded-xl border border-gray-200">
-                    <label class="block text-xs font-bold text-gray-500 uppercase">Tipologia</label>
-                    <select id="searchType" class="w-full bg-transparent outline-none text-sm font-semibold text-gray-800 mt-0.5 cursor-pointer">
-                        <option value="">Tutti i tipi</option>
-                        <option value="Appartamento">Appartamento</option>
-                        <option value="Villa">Villa</option>
-                        <option value="Attico">Attico</option>
-                        <option value="Monolocale">Monolocale</option>
-                    </select>
-                </div>
-                <div class="flex items-center">
-                    <button onclick="filterProperties()" class="w-full h-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 px-6 rounded-xl shadow transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-magnifying-glass"></i> Cerca Immobile
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- MAIN LISTINGS CATALOG -->
-    <main id="catalogo" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
-            <div>
-                <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Immobili in Evidenza</h2>
-                <p class="text-gray-500 text-sm mt-1">Scegli tra le migliori offerte selezionate per te</p>
-            </div>
-            <div class="flex items-center gap-2 bg-white border border-gray-200 p-1.5 rounded-xl shadow-sm">
-                <button onclick="filterCategory('Tutti')" class="filter-btn px-4 py-2 rounded-lg text-sm font-bold bg-brand-600 text-white transition">Tutti</button>
-                <button onclick="filterCategory('Vendita')" class="filter-btn px-4 py-2 rounded-lg text-sm font-bold text-gray-600 hover:text-brand-600 transition">In Vendita</button>
-                <button onclick="filterCategory('Affitto')" class="filter-btn px-4 py-2 rounded-lg text-sm font-bold text-gray-600 hover:text-brand-600 transition">In Affitto</button>
-            </div>
-        </div>
-
-        <!-- LISTINGS GRID -->
-        <div id="propertyGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Dynamic Properties Rendered Here -->
-        </div>
-
-        <!-- EMPTY STATE MESSAGE -->
-        <div id="emptyState" class="hidden text-center py-20">
-            <i class="fa-solid fa-house-circle-xmark text-5xl text-gray-300 mb-4"></i>
-            <h3 class="text-xl font-bold text-gray-700">Nessun immobile trovato</h3>
-            <p class="text-gray-500 text-sm mt-1">Prova a modificare i filtri di ricerca o inserisci un nuovo annuncio.</p>
-        </div>
-    </main>
-
-    <!-- SELL / BANNER SECTION -->
-    <section id="vendi" class="bg-brand-50 border-y border-brand-100 py-16 px-4 sm:px-6 lg:px-8 my-10">
-        <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-            <div class="space-y-4 max-w-xl">
-                <span class="bg-brand-600 text-white text-xs font-extrabold uppercase px-3 py-1 rounded-full">Proprietari e Agenzie</span>
-                <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Vuoi vendere o affittare casa tua velocemente?</h2>
-                <p class="text-gray-600 leading-relaxed">Pubblica subito il tuo annuncio su Immobiliarenext. Raggiungi migliaia di potenziali acquirenti senza commissioni nascoste.</p>
-            </div>
-            <button onclick="openPublishModal()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold py-4 px-8 rounded-2xl shadow-xl transition transform hover:-translate-y-0.5 flex items-center gap-3 text-base">
-                <i class="fa-solid fa-circle-plus text-xl"></i> Pubblica il tuo immobile gratis
-            </button>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer id="contatti" class="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8 mt-auto">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            <div>
-                <div class="flex items-center space-x-3 mb-4">
-                    <div class="bg-brand-600 text-white p-2 rounded-lg font-bold">
-                        <i class="fa-solid fa-house-chimney"></i>
-                    </div>
-                    <span class="text-lg font-bold">Immobiliarenext</span>
-                </div>
-                <p class="text-gray-400 text-sm">Il portale immobiliare smart per compravendite rapide, trasparenti e sicure in tutta Italia.</p>
-            </div>
-            <div>
-                <h4 class="font-bold text-sm uppercase tracking-wider text-gray-300 mb-4">Link Rapidi</h4>
-                <ul class="space-y-2 text-sm text-gray-400">
-                    <li><a href="#catalogo" class="hover:text-white transition">Cerca Immobile</a></li>
-                    <li><a href="#vendi" class="hover:text-white transition">Vendi Casa</a></li>
-                    <li><a href="#chi-siamo" class="hover:text-white transition">Chi Siamo</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-bold text-sm uppercase tracking-wider text-gray-300 mb-4">Tipologie</h4>
-                <ul class="space-y-2 text-sm text-gray-400">
-                    <li><span class="hover:text-white cursor-pointer" onclick="filterType('Appartamento')">Appartamenti</span></li>
-                    <li><span class="hover:text-white cursor-pointer" onclick="filterType('Villa')">Ville di Lusso</span></li>
-                    <li><span class="hover:text-white cursor-pointer" onclick="filterType('Attico')">Attici Panoramici</span></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-bold text-sm uppercase tracking-wider text-gray-300 mb-4">Supporto</h4>
-                <p class="text-gray-400 text-sm mb-2"><i class="fa-solid fa-envelope mr-2"></i> support@immobiliarenext.it</p>
-                <p class="text-gray-400 text-sm"><i class="fa-solid fa-phone mr-2"></i> +39 02 1234567</p>
-            </div>
-        </div>
-        <div class="max-w-7xl mx-auto border-t border-gray-800 pt-6 text-center text-xs text-gray-500">
-            &copy; 2026 Immobiliarenext. Tutti i diritti riservati. Realizzato per GitHub Pages.
-        </div>
-    </footer>
-
-    <!-- PUBLISH MODAL FORM -->
-    <div id="publishModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl relative transform transition-all my-8">
-            <button onclick="closePublishModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 w-9 h-9 rounded-full flex items-center justify-center transition">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            <h3 class="text-2xl font-black text-gray-900 mb-2">Pubblica il tuo immobile</h3>
-            <p class="text-sm text-gray-500 mb-6">Compila i dati dell'annuncio. Sarà visibile subito sul sito.</p>
-            
-            <form id="propertyForm" onsubmit="handlePublish(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Titolo Annuncio</label>
-                    <input type="text" id="formTitle" required placeholder="Es. Luminoso trilocale ristrutturato" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-brand-600 outline-none transition">
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Contratto</label>
-                        <select id="formCategory" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-brand-600 outline-none transition cursor-pointer">
-                            <option value="Vendita">Vendita</option>
-                            <option value="Affitto">Affitto</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Tipologia</label>
-                        <select id="formType" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-brand-600 outline-none transition cursor-pointer">
-                            <option value="Appartamento">Appartamento</option>
-                            <option value="Villa">Villa</option>
-                            <option value="Attico">Attico</option>
-                            <option value="Monolocale">Monolocale</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Città / Località</label>
-                        <input type="text" id="formLocation" required placeholder="Es. Milano" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-brand-600 outline-none transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Prezzo (€)</label>
-                        <input type="number" id="formPrice" required placeholder="Es. 240000" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-brand-600 outline-none transition">
-                    </div>
-                </div>
-                <div class="grid grid-cols-3 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Superficie (m²)</label>
-                        <input type="number" id="formSqm" required placeholder="90" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-brand-600 outline-none transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Camere</label>
-                        <input type="number" id="formRooms" required placeholder="3" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-brand-600 outline-none transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Bagni</label>
-                        <input type="number" id="formBaths" required placeholder="2" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-brand-600 outline-none transition">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase text-gray-700 mb-1">URL Immagine (Foto)</label>
-                    <input type="url" id="formImage" required placeholder="https://images.unsplash.com/..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-brand-600 outline-none transition">
-                    <span class="text-xs text-gray-400 mt-1 block">Puoi incollare il link di una foto da Unsplash o Google Images.</span>
-                </div>
-                <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg transition mt-4">
-                    Pubblica Subito
-                </button>
-            </form>
-        </div>
+<header>
+    <h1>🏗️ Cantiere<span>Pro</span></h1>
+    <div class="backup-btns">
+        <button class="btn-small" onclick="esportaDati()">⬇️ Salva Backup</button>
+        <button class="btn-small" onclick="document.getElementById('importFile').click()">⬆️ Ripristina</button>
+        <input type="file" id="importFile" style="display:none" accept=".json" onchange="importaDati(event)">
     </div>
+</header>
 
-    <!-- DETAIL MODAL -->
-    <div id="detailModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white rounded-3xl max-w-2xl w-full p-8 shadow-2xl relative transform transition-all my-8">
-            <button onclick="closeDetailModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 w-9 h-9 rounded-full flex items-center justify-center transition z-10">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            <div id="detailContent">
-                <!-- Dynamic Detail Content -->
+<nav>
+    <button class="active" onclick="cambiaTab('dashboard', this)">📊 Riepilogo</button>
+    <button onclick="cambiaTab('ore', this)">⏱️ Segna Ore</button>
+    <button onclick="cambiaTab('cantieri', this)">🏢 Cantieri & Utili</button>
+    <button onclick="cambiaTab('operai', this)">👷 Operai & Scadenze</button>
+</nav>
+
+<div class="container">
+
+    <!-- TAB 1: DASHBOARD -->
+    <div id="dashboard" class="section active">
+        <div class="kpi-grid">
+            <div class="kpi-box">
+                <span>Cantieri Attivi</span>
+                <strong id="kpi-cantieri">0</strong>
+            </div>
+            <div class="kpi-box">
+                <span>Ore Totali Registrate</span>
+                <strong id="kpi-ore">0 h</strong>
+            </div>
+            <div class="kpi-box">
+                <span>Utile Totale Cantieri</span>
+                <strong id="kpi-utile">€ 0,00</strong>
+            </div>
+            <div class="kpi-box" style="border-left-color: var(--danger);">
+                <span>Documenti in Scadenza / Scaduti</span>
+                <strong id="kpi-scadenze">0</strong>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>⚠️ Allerta Scadenze Documenti (Entro 30 giorni o Scaduti)</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Operaio</th>
+                            <th>Documento</th>
+                            <th>Data Scadenza</th>
+                            <th>Stato</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dash-scadenze-list"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>💰 Stato Economico Cantieri</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cantiere</th>
+                            <th>Preventivo / Ricavo</th>
+                            <th>Costi (Ore + Materiali)</th>
+                            <th>Margine (Utile/Perdita)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dash-cantieri-list"></tbody>
+                </table>
             </div>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        // Initial Mock Properties Database
-        let properties = [
-            {
-                id: 1,
-                title: "Moderno Trilocale con Terrazzo Panoramico",
-                category: "Vendita",
-                type: "Appartamento",
-                location: "Milano",
-                price: 320000,
-                sqm: 95,
-                rooms: 3,
-                baths: 2,
-                image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
-                description: "Splendido appartamento ristrutturato a nuovo situato in zona servitissima. Ampio living luminoso con cucina a vista, terrazzo abitabile e finiture di pregio."
-            },
-            {
-                id: 2,
-                title: "Villa Indipendente con Giardino Privato",
-                category: "Vendita",
-                type: "Villa",
-                location: "Roma",
-                price: 650000,
-                sqm: 220,
-                rooms: 6,
-                baths: 3,
-                image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
-                description: "Prestigiosa villa unifamiliare circondata dal verde con giardino privato di 500 mq, taverna attrezzata e box doppio."
-            },
-            {
-                id: 3,
-                title: "Attico Vista Mare di Lusso",
-                category: "Affitto",
-                type: "Attico",
-                location: "Napoli",
-                price: 1800,
-                sqm: 110,
-                rooms: 4,
-                baths: 2,
-                image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",
-                description: "Spettacolare attico all'ultimo piano con terrazzo perimetrale e vista mozzafiato sul golfo. Completamente arredato con stile moderno."
-            },
-            {
-                id: 4,
-                title: "Monolocale Accogliente e Centrale",
-                category: "Affitto",
-                type: "Monolocale",
-                location: "Bologna",
-                price: 650,
-                sqm: 38,
-                rooms: 1,
-                baths: 1,
-                image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80",
-                description: "Monolocale funzionale in pieno centro storico, ideale per studenti o giovani lavoratori. Ottime condizioni interne."
-            }
-        ];
-
-        let currentFilterCategory = 'Tutti';
-
-        function renderProperties(dataToRender) {
-            const grid = document.getElementById('propertyGrid');
-            const emptyState = document.getElementById('emptyState');
-            grid.innerHTML = '';
-
-            if (dataToRender.length === 0) {
-                emptyState.classList.remove('hidden');
-                return;
-            } else {
-                emptyState.classList.add('hidden');
-            }
-
-            dataToRender.forEach(prop => {
-                const card = document.createElement('div');
-                card.className = "bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-xl transition flex flex-col justify-between group cursor-pointer";
-                card.onclick = () => showDetails(prop.id);
-
-                card.innerHTML = `
-                    <div class="relative overflow-hidden aspect-[16/10] bg-gray-100">
-                        <img src="${prop.image}" alt="${prop.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                        <div class="absolute top-3 left-3 flex gap-2">
-                            <span class="bg-brand-600 text-white text-xs font-extrabold px-3 py-1 rounded-full shadow">${prop.category}</span>
-                            <span class="bg-gray-900/80 backdrop-blur text-white text-xs font-semibold px-3 py-1 rounded-full shadow">${prop.type}</span>
-                        </div>
+    <!-- TAB 2: SEGNA ORE -->
+    <div id="ore" class="section">
+        <div class="grid-2">
+            <div class="card">
+                <h2>⏱️ Registra Ore Lavorate</h2>
+                <form onsubmit="aggiungiOre(event)">
+                    <div class="form-group">
+                        <label>Data</label>
+                        <input type="date" id="ore-data" required>
                     </div>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <div class="flex items-center text-gray-500 text-xs font-semibold mb-2">
-                            <i class="fa-solid fa-location-dot text-brand-600 mr-1.5"></i> ${prop.location}
-                        </div>
-                        <h3 class="font-bold text-gray-900 text-lg mb-3 line-clamp-1 group-hover:text-brand-600 transition">${prop.title}</h3>
-                        <div class="flex items-center justify-between text-gray-600 text-sm border-y border-gray-100 py-3 mb-4">
-                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-ruler-combined text-gray-400"></i> ${prop.sqm} m²</span>
-                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-bed text-gray-400"></i> ${prop.rooms} cam.</span>
-                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-bath text-gray-400"></i> ${prop.baths} bagni</span>
-                        </div>
-                        <div class="flex items-center justify-between mt-auto">
-                            <span class="text-2xl font-black text-gray-900">${prop.price.toLocaleString('it-IT')} €${prop.category === 'Affitto' ? '<span class="text-xs text-gray-500 font-normal">/mese</span>' : ''}</span>
-                            <span class="text-brand-600 font-bold text-sm flex items-center gap-1 group-hover:translate-x-1 transition">Dettagli <i class="fa-solid fa-arrow-right text-xs"></i></span>
-                        </div>
+                    <div class="form-group">
+                        <label>Cantiere</label>
+                        <select id="ore-cantiere" required></select>
                     </div>
-                `;
-                grid.appendChild(card);
-            });
+                    <div class="form-group">
+                        <label>Operaio</label>
+                        <select id="ore-operaio" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Ore Lavorate (es. 8 o 8.5)</label>
+                        <input type="number" step="0.5" min="0.5" max="24" id="ore-quantita" placeholder="8" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Note lavoro svolto (opzionale)</label>
+                        <input type="text" id="ore-note" placeholder="Es. Gettata pilastri, tramezzi...">
+                    </div>
+                    <button type="submit" class="btn-primary">+ Registra Ore</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>📋 Ultime Registrazioni Ore</h2>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Operaio</th>
+                                <th>Cantiere</th>
+                                <th>Ore</th>
+                                <th>Costo</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-ore"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: CANTIERI E UTILI -->
+    <div id="cantieri" class="section">
+        <div class="grid-2">
+            <div class="card">
+                <h2>🏢 Nuovo Cantiere</h2>
+                <form onsubmit="aggiungiCantiere(event)">
+                    <div class="form-group">
+                        <label>Nome Cantiere / Cliente</label>
+                        <input type="text" id="cant-nome" placeholder="Es. Ristrutturazione Villa Rossi" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Importo Preventivo / Ricavo Pattuito (€)</label>
+                        <input type="number" step="0.01" id="cant-ricavo" placeholder="25000" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Costi Extra / Materiali / Noleggi iniziali (€)</label>
+                        <input type="number" step="0.01" id="cant-materiali" value="0" required>
+                    </div>
+                    <button type="submit" class="btn-primary">+ Crea Cantiere</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>➕ Aggiungi Spesa Materiali a Cantiere</h2>
+                <form onsubmit="aggiungiSpesaMateriale(event)">
+                    <div class="form-group">
+                        <label>Seleziona Cantiere</label>
+                        <select id="spesa-cantiere" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Importo Spesa Materiali / Fattura (€)</label>
+                        <input type="number" step="0.01" id="spesa-importo" placeholder="450.00" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Aggiungi Costo Materiali</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📊 Bilancio Dettagliato Cantieri (Guadagno vs Perdita)</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cantiere</th>
+                            <th>Ricavo Pattuito</th>
+                            <th>Costo Manodopera</th>
+                            <th>Costo Materiali</th>
+                            <th>Totale Costi</th>
+                            <th>Utile / Perdita</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-cantieri"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 4: OPERAI E SCADENZE -->
+    <div id="operai" class="section">
+        <div class="grid-2">
+            <div class="card">
+                <h2>👷 Aggiungi Operaio</h2>
+                <form onsubmit="aggiungiOperaio(event)">
+                    <div class="form-group">
+                        <label>Nome e Cognome</label>
+                        <input type="text" id="op-nome" placeholder="Es. Marco Bianchi" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Qualifica</label>
+                        <input type="text" id="op-ruolo" placeholder="Es. Muratore / Capocantiere" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Costo Orario Aziendale (€/ora)</label>
+                        <input type="number" step="0.5" id="op-costo" placeholder="22.00" required>
+                    </div>
+                    <button type="submit" class="btn-primary">+ Salva Operaio</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>📄 Aggiungi Scadenza Documento</h2>
+                <form onsubmit="aggiungiDocumento(event)">
+                    <div class="form-group">
+                        <label>Operaio</label>
+                        <select id="doc-operaio" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo Documento</label>
+                        <select id="doc-tipo">
+                            <option value="Visita Medica / Idoneità">Visita Medica / Idoneità</option>
+                            <option value="Corso Sicurezza Generale/Specifica">Corso Sicurezza (Art. 37)</option>
+                            <option value="Patentino Gru / Mezzi / Ponteggi">Patentino Gru / Mezzi / Ponteggi</option>
+                            <option value="Corso Primo Soccorso / Antincendio">Corso Primo Soccorso / Antincendio</option>
+                            <option value="UNILAV / Contratto a Termine">UNILAV / Contratto a Termine</option>
+                            <option value="Carta d'Identità / Permesso Soggiorno">Documento Identità / Permesso</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Data di Scadenza</label>
+                        <input type="date" id="doc-scadenza" required>
+                    </div>
+                    <button type="submit" class="btn-primary">+ Registra Scadenza</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>👷 Elenco Operai e Costi Orari</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Qualifica</th>
+                            <th>Costo Orario</th>
+                            <th>Ore Totali</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-operai"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🗂️ Registro Completo Scadenze Documenti</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Operaio</th>
+                            <th>Documento</th>
+                            <th>Scadenza</th>
+                            <th>Stato</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-documenti"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Stato dell'applicazione salvato in LocalStorage
+    let db = JSON.parse(localStorage.getItem('cantiereProDB')) || {
+        operai: [],
+        cantieri: [],
+        ore: [],
+        documenti: []
+    };
+
+    // Imposta data odierna di default nel form ore
+    document.getElementById('ore-data').valueAsDate = new Date();
+
+    function salvaDB() {
+        localStorage.setItem('cantiereProDB', JSON.stringify(db));
+        aggiornaUI();
+    }
+
+    function cambiaTab(tabId, btn) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    function formatEuro(num) {
+        return '€ ' + Number(num).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function formatData(dataStr) {
+        if (!dataStr) return '';
+        const [y, m, d] = dataStr.split('-');
+        return `${d}/${m}/${y}`;
+    }
+
+    // --- OPERAI ---
+    function aggiungiOperaio(e) {
+        e.preventDefault();
+        db.operai.push({
+            id: Date.now(),
+            nome: document.getElementById('op-nome').value.trim(),
+            ruolo: document.getElementById('op-ruolo').value.trim(),
+            costoOrario: parseFloat(document.getElementById('op-costo').value)
+        });
+        e.target.reset();
+        salvaDB();
+    }
+
+    function eliminaOperaio(id) {
+        if (!confirm('Eliminare questo operaio?')) return;
+        db.operai = db.operai.filter(o => o.id !== id);
+        salvaDB();
+    }
+
+    // --- CANTIERI ---
+    function aggiungiCantiere(e) {
+        e.preventDefault();
+        db.cantieri.push({
+            id: Date.now(),
+            nome: document.getElementById('cant-nome').value.trim(),
+            ricavo: parseFloat(document.getElementById('cant-ricavo').value),
+            materiali: parseFloat(document.getElementById('cant-materiali').value) || 0
+        });
+        e.target.reset();
+        document.getElementById('cant-materiali').value = 0;
+        salvaDB();
+    }
+
+    function aggiungiSpesaMateriale(e) {
+        e.preventDefault();
+        const cantId = Number(document.getElementById('spesa-cantiere').value);
+        const importo = parseFloat(document.getElementById('spesa-importo').value);
+        const cantiere = db.cantieri.find(c => c.id === cantId);
+        if (cantiere) {
+            cantiere.materiali += importo;
+            e.target.reset();
+            salvaDB();
         }
+    }
 
-        function filterCategory(category) {
-            currentFilterCategory = category;
-            
-            // Update UI buttons
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                if (btn.textContent.includes(category) || (category === 'Tutti' && btn.textContent === 'Tutti')) {
-                    btn.className = "filter-btn px-4 py-2 rounded-lg text-sm font-bold bg-brand-600 text-white transition";
+    function eliminaCantiere(id) {
+        if (!confirm('Eliminare questo cantiere?')) return;
+        db.cantieri = db.cantieri.filter(c => c.id !== id);
+        salvaDB();
+    }
+
+    // --- ORE ---
+    function aggiungiOre(e) {
+        e.preventDefault();
+        const opId = Number(document.getElementById('ore-operaio').value);
+        const cantId = Number(document.getElementById('ore-cantiere').value);
+        const operaio = db.operai.find(o => o.id === opId);
+        const oreLavorate = parseFloat(document.getElementById('ore-quantita').value);
+
+        if (!operaio) return alert('Seleziona un operaio valido.');
+
+        db.ore.unshift({
+            id: Date.now(),
+            data: document.getElementById('ore-data').value,
+            cantiereId: cantId,
+            operaioId: opId,
+            ore: oreLavorate,
+            costoTotale: oreLavorate * operaio.costoOrario,
+            note: document.getElementById('ore-note').value.trim()
+        });
+
+        document.getElementById('ore-quantita').value = '';
+        document.getElementById('ore-note').value = '';
+        salvaDB();
+    }
+
+    function eliminaOre(id) {
+        db.ore = db.ore.filter(o => o.id !== id);
+        salvaDB();
+    }
+
+    // --- DOCUMENTI ---
+    function aggiungiDocumento(e) {
+        e.preventDefault();
+        db.documenti.push({
+            id: Date.now(),
+            operaioId: Number(document.getElementById('doc-operaio').value),
+            tipo: document.getElementById('doc-tipo').value,
+            scadenza: document.getElementById('doc-scadenza').value
+        });
+        e.target.reset();
+        salvaDB();
+    }
+
+    function eliminaDocumento(id) {
+        db.documenti = db.documenti.filter(d => d.id !== id);
+        salvaDB();
+    }
+
+    function statoScadenza(dataStr) {
+        const oggi = new Date();
+        oggi.setHours(0,0,0,0);
+        const scad = new Date(dataStr);
+        const diffGiorni = Math.ceil((scad - oggi) / (1000 * 60 * 60 * 24));
+
+        if (diffGiorni < 0) {
+            return { testo: `SCADUTO da ${Math.abs(diffGiorni)} gg`, classe: 'badge-danger', allerta: true };
+        } else if (diffGiorni <= 30) {
+            return { testo: `Scade tra ${diffGiorni} gg`, classe: 'badge-warn', allerta: true };
+        } else {
+            return { testo: 'Valido', classe: 'badge-ok', allerta: false };
+        }
+    }
+
+    // --- AGGIORNAMENTO INTERFACCIA ---
+    function aggiornaUI() {
+        // Popola Select
+        const selCantOre = document.getElementById('ore-cantiere');
+        const selCantSpesa = document.getElementById('spesa-cantiere');
+        const selOpOre = document.getElementById('ore-operaio');
+        const selOpDoc = document.getElementById('doc-operaio');
+
+        const optCantieri = db.cantieri.length 
+            ? db.cantieri.map(c => `<option value="${c.id}">${c.nome}</option>`).join('')
+            : '<option value="">-- Crea prima un cantiere --</option>';
+        selCantOre.innerHTML = optCantieri;
+        selCantSpesa.innerHTML = optCantieri;
+
+        const optOperai = db.operai.length
+            ? db.operai.map(o => `<option value="${o.id}">${o.nome} (${formatEuro(o.costoOrario)}/h)</option>`).join('')
+            : '<option value="">-- Aggiungi prima un operaio --</option>';
+        selOpOre.innerHTML = optOperai;
+        selOpDoc.innerHTML = optOperai;
+
+        // Tabella Operai
+        document.getElementById('lista-operai').innerHTML = db.operai.length ? db.operai.map(o => {
+            const oreOp = db.ore.filter(x => x.operaioId === o.id).reduce((acc, x) => acc + x.ore, 0);
+            return `<tr>
+                <td><strong>${o.nome}</strong></td>
+                <td>${o.ruolo}</td>
+                <td>${formatEuro(o.costoOrario)}/h</td>
+                <td>${oreOp} h</td>
+                <td><button class="btn-danger" onclick="eliminaOperaio(${o.id})">Elimina</button></td>
+            </tr>`;
+        }).join('') : '<tr><td colspan="5" class="empty-msg">Nessun operaio inserito.</td></tr>';
+
+        // Tabella Documenti & Allerte
+        let countAllerte = 0;
+        let htmlAllerte = '';
+        const docsOrdinati = [...db.documenti].sort((a, b) => new Date(a.scadenza) - new Date(b.scadenza));
+
+        document.getElementById('lista-documenti').innerHTML = docsOrdinati.length ? docsOrdinati.map(d => {
+            const op = db.operai.find(o => o.id === d.operaioId);
+            const nomeOp = op ? op.nome : 'Operaio rimosso';
+            const stato = statoScadenza(d.scadenza);
+            if (stato.allerta) {
+                countAllerte++;
+                htmlAllerte += `<tr>
+                    <td><strong>${nomeOp}</strong></td>
+                    <td>${d.tipo}</td>
+                    <td>${formatData(d.scadenza)}</td>
+                    <td><span class="badge ${stato.classe}">${stato.testo}</span></td>
+                </tr>`;
+            }
+            return `<tr>
+                <td><strong>${nomeOp}</strong></td>
+                <td>${d.tipo}</td>
+                <td>${formatData(d.scadenza)}</td>
+                <td><span class="badge ${stato.classe}">${stato.testo}</span></td>
+                <td><button class="btn-danger" onclick="eliminaDocumento(${d.id})">Elimina</button></td>
+            </tr>`;
+        }).join('') : '<tr><td colspan="5" class="empty-msg">Nessun documento registrato.</td></tr>';
+
+        document.getElementById('dash-scadenze-list').innerHTML = htmlAllerte || '<tr><td colspan="4" class="empty-msg">✅ Tutti i documenti sono in regola!</td></tr>';
+
+        // Tabella Cantieri & Calcolo Utile/Perdita
+        let utileComplessivo = 0;
+        let htmlDashCantieri = '';
+
+        document.getElementById('lista-cantieri').innerHTML = db.cantieri.length ? db.cantieri.map(c => {
+            const costoOre = db.ore.filter(x => x.cantiereId === c.id).reduce((acc, x) => acc + x.costoTotale, 0);
+            const costiTotali = costoOre + c.materiali;
+            const margine = c.ricavo - costiTotali;
+            utileComplessivo += margine;
+
+            const classeMargine = margine >= 0 ? 'text-success' : 'text-danger';
+            const badgeMargine = margine >= 0 
+                ? `<span class="badge badge-ok">+ ${formatEuro(margine)} (IN UTILE)</span>`
+                : `<span class="badge badge-danger">${formatEuro(margine)} (IN PERDITA)</span>`;
+
+            htmlDashCantieri += `<tr>
+                <td><strong>${c.nome}</strong></td>
+                <td>${formatEuro(c.ricavo)}</td>
+                <td>${formatEuro(costiTotali)}</td>
+                <td>${badgeMargine}</td>
+            </tr>`;
+
+            return `<tr>
+                <td><strong>${c.nome}</strong></td>
+                <td>${formatEuro(c.ricavo)}</td>
+                <td>${formatEuro(costoOre)}</td>
+                <td>${formatEuro(c.materiali)}</td>
+                <td><strong>${formatEuro(costiTotali)}</strong></td>
+                <td class="${classeMargine}"><strong>${formatEuro(margine)}</strong></td>
+                <td><button class="btn-danger" onclick="eliminaCantiere(${c.id})">Elimina</button></td>
+            </tr>`;
+        }).join('') : '<tr><td colspan="7" class="empty-msg">Nessun cantiere creato.</td></tr>';
+
+        document.getElementById('dash-cantieri-list').innerHTML = htmlDashCantieri || '<tr><td colspan="4" class="empty-msg">Nessun cantiere attivo.</td></tr>';
+
+        // Tabella Ore
+        document.getElementById('lista-ore').innerHTML = db.ore.length ? db.ore.map(r => {
+            const op = db.operai.find(o => o.id === r.operaioId);
+            const cant = db.cantieri.find(c => c.id === r.cantiereId);
+            return `<tr>
+                <td>${formatData(r.data)}</td>
+                <td>${op ? op.nome : '-'}</td>
+                <td>${cant ? cant.nome : '-'}${r.note ? `<br><small style="color:#64748b">${r.note}</small>` : ''}</td>
+                <td><strong>${r.ore} h</strong></td>
+                <td>${formatEuro(r.costoTotale)}</td>
+                <td><button class="btn-danger" onclick="eliminaOre(${r.id})">X</button></td>
+            </tr>`;
+        }).join('') : '<tr><td colspan="6" class="empty-msg">Nessuna ora registrata.</td></tr>';
+
+        // Aggiorna KPI Dashboard
+        const oreTotali = db.ore.reduce((acc, x) => acc + x.ore, 0);
+        document.getElementById('kpi-cantieri').innerText = db.cantieri.length;
+        document.getElementById('kpi-ore').innerText = oreTotali + ' h';
+        const kpiUtileEl = document.getElementById('kpi-utile');
+        kpiUtileEl.innerText = formatEuro(utileComplessivo);
+        kpiUtileEl.className = utileComplessivo >= 0 ? 'text-success' : 'text-danger';
+        document.getElementById('kpi-scadenze').innerText = countAllerte;
+    }
+
+    // --- BACKUP JSON ---
+    function esportaDati() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", "backup_cantiere_" + new Date().toISOString().slice(0,10) + ".json");
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    }
+
+    function importaDati(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const imported = JSON.parse(e.target.result);
+                if (imported.operai && imported.cantieri && imported.ore && imported.documenti) {
+                    db = imported;
+                    salvaDB();
+                    alert('Backup ripristinato con successo!');
                 } else {
-                    btn.className = "filter-btn px-4 py-2 rounded-lg text-sm font-bold text-gray-600 hover:text-brand-600 transition";
+                    alert('File di backup non valido.');
                 }
-            });
+            } catch (err) {
+                alert('Errore nella lettura del file.');
+            }
+        };
+        reader.readAsText(file);
+    }
 
-            applyFilters();
-        }
+    // Avvio iniziale
+    aggiornaUI();
+</script>
 
-        function filterType(type) {
-            document.getElementById('searchType').value = type;
-            applyFilters();
-        }
-
-        function filterProperties() {
-            applyFilters();
-        }
-
-        function applyFilters() {
-            const locQuery = document.getElementById('searchLocation').value.toLowerCase();
-            const typeQuery = document.getElementById('searchType').value;
-
-            let filtered = properties.filter(prop => {
-                const matchCategory = currentFilterCategory === 'Tutti' || prop.category === currentFilterCategory;
-                const matchLocation = prop.location.toLowerCase().includes(locQuery);
-                const matchType = !typeQuery || prop.type === typeQuery;
-                return matchCategory && matchLocation && matchType;
-            });
-
-            renderProperties(filtered);
-        }
-
-        function showDetails(id) {
-            const prop = properties.find(p => p.id === id);
-            if (!prop) return;
-
-            const container = document.getElementById('detailContent');
-            container.innerHTML = `
-                <div class="rounded-2xl overflow-hidden aspect-[16/9] mb-6 bg-gray-100 shadow-inner">
-                    <img src="${prop.image}" alt="${prop.title}" class="w-full h-full object-cover">
-                </div>
-                <div class="flex gap-2 mb-3">
-                    <span class="bg-brand-600 text-white text-xs font-extrabold px-3 py-1 rounded-full">${prop.category}</span>
-                    <span class="bg-gray-100 text-gray-800 text-xs font-semibold px-3 py-1 rounded-full">${prop.type}</span>
-                </div>
-                <h2 class="text-2xl font-black text-gray-900 mb-2">${prop.title}</h2>
-                <p class="text-gray-500 text-sm mb-4 flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-brand-600"></i> ${prop.location}</p>
-                <div class="bg-gray-50 rounded-2xl p-4 grid grid-cols-3 gap-4 mb-6 text-center border border-gray-100">
-                    <div>
-                        <span class="block text-xs text-gray-400 font-bold uppercase">Superficie</span>
-                        <span class="text-lg font-bold text-gray-800">${prop.sqm} m²</span>
-                    </div>
-                    <div>
-                        <span class="block text-xs text-gray-400 font-bold uppercase">Camere</span>
-                        <span class="text-lg font-bold text-gray-800">${prop.rooms}</span>
-                    </div>
-                    <div>
-                        <span class="block text-xs text-gray-400 font-bold uppercase">Bagni</span>
-                        <span class="text-lg font-bold text-gray-800">${prop.baths}</span>
-                    </div>
-                </div>
-                <p class="text-gray-600 text-sm leading-relaxed mb-6">${prop.description}</p>
-                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <div>
-                        <span class="text-xs text-gray-400 block font-bold uppercase">Prezzo Richiesto</span>
-                        <span class="text-3xl font-black text-gray-900">${prop.price.toLocaleString('it-IT')} €${prop.category === 'Affitto' ? '<span class="text-xs text-gray-500 font-normal">/mese</span>' : ''}</span>
-                    </div>
-                    <button onclick="alert('Richiesta inviata con successo! Verrai ricontattato dall\'inserzionista.'); closeDetailModal();" class="bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 px-6 rounded-xl shadow transition flex items-center gap-2">
-                        <i class="fa-solid fa-envelope"></i> Contatta Inserzionista
-                    </button>
-                </div>
-            `;
-            document.getElementById('detailModal').classList.remove('hidden');
-        }
-
-        function closeDetailModal() {
-            document.getElementById('detailModal').classList.add('hidden');
-        }
-
-        function openPublishModal() {
-            document.getElementById('publishModal').classList.remove('hidden');
-        }
-
-        function closePublishModal() {
-            document.getElementById('publishModal').classList.add('hidden');
-        }
-
-        function handlePublish(e) {
-            e.preventDefault();
-            const newProp = {
-                id: properties.length + 1,
-                title: document.getElementById('formTitle').value,
-                category: document.getElementById('formCategory').value,
-                type: document.getElementById('formType').value,
-                location: document.getElementById('formLocation').value,
-                price: Number(document.getElementById('formPrice').value),
-                sqm: Number(document.getElementById('formSqm').value),
-                rooms: Number(document.getElementById('formRooms').value),
-                baths: Number(document.getElementById('formBaths').value),
-                image: document.getElementById('formImage').value,
-                description: "Nuovo annuncio pubblicato direttamente dalla piattaforma."
-            };
-
-            properties.unshift(newProp);
-            applyFilters();
-            closePublishModal();
-            document.getElementById('propertyForm').reset();
-            alert('Annuncio pubblicato con successo!');
-        }
-
-        // Initial Render
-        renderProperties(properties);
-    </script>
 </body>
 </html>
+
