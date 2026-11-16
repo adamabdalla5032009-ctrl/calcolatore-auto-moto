@@ -31,6 +31,43 @@
             padding-bottom: 50px;
         }
 
+        /* Schermata Login PIN */
+        #auth-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0f172a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .auth-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: #0f172a;
+        }
+
+        .auth-card p {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 20px;
+        }
+
         header {
             background-color: #0f172a;
             color: white;
@@ -53,10 +90,20 @@
             color: var(--primary);
         }
 
+        .user-badge {
+            background: #1e293b;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            border: 1px solid #334155;
+            color: #cbd5e1;
+        }
+
         .backup-btns {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .btn-small {
@@ -80,6 +127,13 @@
 
         .btn-example:hover {
             background: #0369a1;
+        }
+
+        .btn-logout {
+            background: #7f1d1d;
+        }
+        .btn-logout:hover {
+            background: #991b1b;
         }
 
         nav {
@@ -212,6 +266,7 @@
         /* Form e Aiuti Contestuali */
         .form-group {
             margin-bottom: 14px;
+            text-align: left;
         }
 
         label {
@@ -505,12 +560,33 @@
 </head>
 <body>
 
+<!-- SCHERMATA LOGIN / ACCESSO CON PIN -->
+<div id="auth-screen">
+    <div class="auth-card">
+        <h2>🏗️ Cantiere<span>Pro</span></h2>
+        <p>Inserisci il tuo Nome e il tuo Codice PIN per accedere ai tuoi cantieri e dati.</p>
+        <form onsubmit="eseguiLogin(event)">
+            <div class="form-group">
+                <label>Nome Utente / Impresa</label>
+                <input type="text" id="auth-nome" placeholder="Es. Mario Rossi" required>
+            </div>
+            <div class="form-group">
+                <label>Codice PIN Segreto (es. 4 cifre)</label>
+                <input type="password" id="auth-pin" placeholder="••••" maxlength="8" required>
+            </div>
+            <button type="submit" class="btn-primary" style="margin-top: 10px;">Accedi / Recupera Dati</button>
+        </form>
+    </div>
+</div>
+
 <header>
     <h1>🏗️ Cantiere<span>Pro</span></h1>
     <div class="backup-btns">
-        <button class="btn-small btn-example" onclick="caricaDatiEsempio()">💡 Carica Dati Esempio</button>
+        <span id="header-user-badge" class="user-badge">👤 Utente</span>
+        <button class="btn-small btn-example" onclick="caricaDatiEsempio()">💡 Carica Esempi</button>
         <button class="btn-small" onclick="esportaDati()">⬇️ Salva Backup</button>
         <button class="btn-small" onclick="document.getElementById('importFile').click()">⬆️ Ripristina</button>
+        <button class="btn-small btn-logout" onclick="esciProfilo()">🚪 Cambia Utente</button>
         <input type="file" id="importFile" style="display:none" accept=".json" onchange="importaDati(event)">
     </div>
 </header>
@@ -892,7 +968,8 @@
 <script>
     const ORE_PER_GIORNO = 8;
 
-    let db = JSON.parse(localStorage.getItem('cantiereProDB_v2')) || {
+    let currentUser = null;
+    let db = {
         operai: [],
         cantieri: [],
         presenze: [],
@@ -914,8 +991,43 @@
         setTimeout(() => t.classList.remove('show'), 2500);
     }
 
+    // --- GESTIONE LOGIN / UTENTE CON PIN ---
+    function eseguiLogin(e) {
+        e.preventDefault();
+        const nome = document.getElementById('auth-nome').value.trim();
+        const pin = document.getElementById('auth-pin').value.trim();
+
+        if (!nome || !pin) return alert('Inserisci nome e PIN.');
+
+        currentUser = { nome, pin };
+        const storageKey = `cantierePro_user_${nome}_${pin}`;
+        
+        const savedData = localStorage.getItem(storageKey);
+        if (savedData) {
+            db = JSON.parse(savedData);
+        } else {
+            // Profilo nuovo
+            db = { operai: [], cantieri: [], presenze: [], documenti: [] };
+            salvaDB();
+        }
+
+        document.getElementById('header-user-badge').innerText = `👤 ${nome}`;
+        document.getElementById('auth-screen').style.display = 'none';
+        aggiornaUI();
+        mostraToast(`Benvenuto, ${nome}!`);
+    }
+
+    function esciProfilo() {
+        if (!confirm('Vuoi uscire e cambiare utente?')) return;
+        currentUser = null;
+        document.getElementById('auth-pin').value = '';
+        document.getElementById('auth-screen').style.display = 'flex';
+    }
+
     function salvaDB() {
-        localStorage.setItem('cantiereProDB_v2', JSON.stringify(db));
+        if (!currentUser) return;
+        const storageKey = `cantierePro_user_${currentUser.nome}_${currentUser.pin}`;
+        localStorage.setItem(storageKey, JSON.stringify(db));
         aggiornaUI();
     }
 
@@ -953,6 +1065,7 @@
 
     // --- CARICA DATI ESEMPIO ---
     function caricaDatiEsempio() {
+        if (!currentUser) return;
         if (db.cantieri.length > 0 && !confirm('Sovrascrivere i dati attuali con gli esempi dimostrativi?')) return;
 
         const oggi = new Date();
@@ -1043,7 +1156,6 @@
         
         if (isPresente) {
             btn.innerHTML = '✓ Nel Cantiere';
-            // Imposta 1 giornata di default quando viene spuntato
             const inpGg = row.querySelector('.squadra-input-gg');
             if (inpGg && parseFloat(inpGg.value) === 0) inpGg.value = 1;
         } else {
@@ -1255,6 +1367,8 @@
 
     // --- AGGIORNAMENTO INTERFACCIA ---
     function aggiornaUI() {
+        if (!currentUser) return;
+
         const optCantieri = db.cantieri.length 
             ? db.cantieri.map(c => `<option value="${c.id}">${c.nome}</option>`).join('')
             : '<option value="">-- Crea prima un cantiere --</option>';
@@ -1438,7 +1552,7 @@
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
         const downloadAnchor = document.createElement('a');
         downloadAnchor.setAttribute("href", dataStr);
-        downloadAnchor.setAttribute("download", "backup_cantiere_" + new Date().toISOString().slice(0,10) + ".json");
+        downloadAnchor.setAttribute("download", `backup_cantiere_${currentUser.nome}_${new Date().toISOString().slice(0,10)}.json`);
         document.body.appendChild(downloadAnchor);
         downloadAnchor.click();
         downloadAnchor.remove();
@@ -1464,8 +1578,6 @@
         };
         reader.readAsText(file);
     }
-
-    aggiornaUI();
 </script>
 
 </body>
