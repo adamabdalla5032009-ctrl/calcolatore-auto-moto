@@ -355,18 +355,23 @@
             display: block;
         }
 
-        /* Riga Squadra Presenze */
+        /* Riga Assegnazione Squadra al Cantiere */
         .squadra-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 12px;
+            padding: 12px;
             border: 1px solid var(--border);
             border-radius: 8px;
             margin-bottom: 8px;
             background: #f8fafc;
             gap: 10px;
             flex-wrap: wrap;
+        }
+
+        .squadra-row.presente {
+            background: #f0fdf4;
+            border-color: #86efac;
         }
 
         .squadra-info strong {
@@ -379,16 +384,42 @@
             font-size: 0.8rem;
         }
 
-        .squadra-controls {
+        .btn-toggle-presenza {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            background: #ffffff;
+            color: var(--muted);
+            transition: all 0.2s;
+        }
+
+        .squadra-row.presente .btn-toggle-presenza {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .squadra-inputs-wrapper {
             display: flex;
             gap: 8px;
             align-items: center;
+            margin-top: 8px;
+            width: 100%;
+            padding-top: 8px;
+            border-top: 1px dashed var(--border);
+        }
+
+        .squadra-row:not(.presente) .squadra-inputs-wrapper {
+            display: none;
         }
 
         .squadra-field {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            flex: 1;
         }
 
         .squadra-field span {
@@ -399,7 +430,7 @@
         }
 
         .squadra-input-gg, .squadra-input-extra {
-            width: 75px;
+            width: 100%;
             padding: 7px 5px;
             text-align: center;
             font-weight: 700;
@@ -584,9 +615,9 @@
     <!-- TAB 2: SEGNA GIORNATE & ORE IN PIÙ -->
     <div id="ore" class="section">
         <div class="grid-2">
-            <!-- INSERIMENTO SQUADRA IN BLOCCO -->
+            <!-- INSERIMENTO SQUADRA SELEZIONABILE PER CANTIERE -->
             <div class="card">
-                <h2>👷‍♂️ Segna Squadra (Giornate + Ore in più)</h2>
+                <h2>👷‍♂️ Assegna Squadra al Cantiere</h2>
                 <form onsubmit="salvaPresenzeSquadra(event)">
                     <div class="grid-2" style="gap:10px;">
                         <div class="form-group">
@@ -595,12 +626,12 @@
                         </div>
                         <div class="form-group">
                             <label>Cantiere</label>
-                            <select id="squadra-cantiere" required></select>
+                            <select id="squadra-cantiere" required onchange="renderizzaListaSquadra()"></select>
                         </div>
                     </div>
-                    <span class="help-text" style="margin-bottom: 12px;"><strong>1</strong> = Giornata intera (8h) • <strong>0.5</strong> = Mezza (4h) • <strong>0</strong> = Assente.</span>
+                    <span class="help-text" style="margin-bottom: 12px;">Clicca su <strong>❌ Non qui</strong> per attivare l'operaio in questo cantiere (diventa verde <strong>✓ Nel Cantiere</strong>).</span>
                     <div id="squadra-lista-operai"></div>
-                    <button type="submit" class="btn-primary" style="margin-top: 10px;">✓ Salva Giornate della Squadra</button>
+                    <button type="submit" class="btn-primary" style="margin-top: 10px;">✓ Salva Assegnazioni della Giornata</button>
                 </form>
             </div>
 
@@ -1005,6 +1036,52 @@
         mostraToast(`✓ Registrato: ${giorni} gg + ${oreExtra}h extra per ${operaio.nome}`);
     }
 
+    // --- GESTIONE TOGGLE PRESENZA SQUADRA ---
+    function togglePresenzaOperaio(btn) {
+        const row = btn.closest('.squadra-row');
+        const isPresente = row.classList.toggle('presente');
+        
+        if (isPresente) {
+            btn.innerHTML = '✓ Nel Cantiere';
+            // Imposta 1 giornata di default quando viene spuntato
+            const inpGg = row.querySelector('.squadra-input-gg');
+            if (inpGg && parseFloat(inpGg.value) === 0) inpGg.value = 1;
+        } else {
+            btn.innerHTML = '❌ Non qui';
+            const inpGg = row.querySelector('.squadra-input-gg');
+            const inpExtra = row.querySelector('.squadra-input-extra');
+            if (inpGg) inpGg.value = 0;
+            if (inpExtra) inpExtra.value = 0;
+        }
+    }
+
+    function renderizzaListaSquadra() {
+        const container = document.getElementById('squadra-lista-operai');
+        if (!container) return;
+
+        container.innerHTML = db.operai.length ? db.operai.map(o => `
+            <div class="squadra-row" data-opid="${o.id}">
+                <div class="squadra-info" style="flex:1;">
+                    <strong>${o.nome}</strong>
+                    <small>${o.ruolo} • ${formatEuro(o.pagaGiornaliera)}/gg</small>
+                </div>
+                <div>
+                    <button type="button" class="btn-toggle-presenza" onclick="togglePresenzaOperaio(this)">❌ Non qui</button>
+                </div>
+                <div class="squadra-inputs-wrapper">
+                    <div class="squadra-field">
+                        <span>GIORNATE</span>
+                        <input type="number" class="squadra-input-gg" step="0.5" min="0" max="1" value="0">
+                    </div>
+                    <div class="squadra-field">
+                        <span>+ ORE EXTRA</span>
+                        <input type="number" class="squadra-input-extra" step="0.5" min="0" max="16" value="0">
+                    </div>
+                </div>
+            </div>
+        `).join('') : '<p class="empty-msg">Aggiungi prima gli operai nella scheda "Operai, Paghe & Scadenze".</p>';
+    }
+
     // --- PRESENZE SQUADRA IN BLOCCO ---
     function salvaPresenzeSquadra(e) {
         e.preventDefault();
@@ -1013,7 +1090,7 @@
 
         if (!cantId) return alert('Seleziona un cantiere valido.');
 
-        const rows = document.querySelectorAll('.squadra-row');
+        const rows = document.querySelectorAll('.squadra-row.presente');
         let registrati = 0;
 
         rows.forEach(row => {
@@ -1023,7 +1100,7 @@
             const oreExtra = parseFloat(inpExtra.value) || 0;
 
             if (giorni > 0 || oreExtra > 0) {
-                const opId = Number(inpGg.dataset.opid);
+                const opId = Number(row.dataset.opid);
                 const operaio = db.operai.find(o => o.id === opId);
                 if (operaio) {
                     db.presenze.unshift({
@@ -1034,16 +1111,18 @@
                         giorni: giorni,
                         oreExtra: oreExtra,
                         costoTotale: calcolaCostoPresenza(operaio.pagaGiornaliera, giorni, oreExtra),
-                        note: 'Presenza squadra'
+                        note: 'Assegnazione squadra'
                     });
                     registrati++;
                 }
             }
         });
 
-        if (registrati === 0) return alert('Inserisci almeno una giornata o ora extra per un operaio.');
+        if (registrati === 0) return alert('Seleziona almeno un operaio (mettendolo in verde) e inserisci le giornate o ore extra.');
+        
         salvaDB();
-        mostraToast(`✓ Registrate giornate per ${registrati} operai!`);
+        renderizzaListaSquadra();
+        mostraToast(`✓ Salvate presenze per ${registrati} operai in questo cantiere!`);
     }
 
     // --- PRESENZA SINGOLA ---
@@ -1091,6 +1170,7 @@
         });
         e.target.reset();
         salvaDB();
+        renderizzaListaSquadra();
         mostraToast('👷 Operaio aggiunto!');
     }
 
@@ -1098,6 +1178,7 @@
         if (!confirm('Eliminare questo operaio?')) return;
         db.operai = db.operai.filter(o => o.id !== id);
         salvaDB();
+        renderizzaListaSquadra();
     }
 
     // --- CANTIERI & PREVISIONE ---
@@ -1180,7 +1261,11 @@
 
         ['ore-cantiere', 'spesa-cantiere', 'quick-cantiere', 'squadra-cantiere'].forEach(id => {
             const el = document.getElementById(id);
-            if (el) el.innerHTML = optCantieri;
+            if (el) {
+                const valPrecedente = el.value;
+                el.innerHTML = optCantieri;
+                if (valPrecedente) el.value = valPrecedente;
+            }
         });
 
         const optOperai = db.operai.length
@@ -1192,27 +1277,9 @@
             if (el) el.innerHTML = optOperai;
         });
 
-        // Lista Squadra
-        document.getElementById('squadra-lista-operai').innerHTML = db.operai.length
-            ? db.operai.map(o => `
-                <div class="squadra-row">
-                    <div class="squadra-info">
-                        <strong>${o.nome}</strong>
-                        <small>${o.ruolo} • ${formatEuro(o.pagaGiornaliera)}/gg</small>
-                    </div>
-                    <div class="squadra-controls">
-                        <div class="squadra-field">
-                            <span>GIORNATE</span>
-                            <input type="number" class="squadra-input-gg" data-opid="${o.id}" step="0.5" min="0" max="1" value="1">
-                        </div>
-                        <div class="squadra-field">
-                            <span>+ ORE EXTRA</span>
-                            <input type="number" class="squadra-input-extra" step="0.5" min="0" max="16" value="0">
-                        </div>
-                    </div>
-                </div>
-            `).join('')
-            : '<p class="empty-msg">Aggiungi prima gli operai nella scheda "Operai, Paghe & Scadenze".</p>';
+        if (!document.getElementById('squadra-lista-operai').hasChildNodes() || document.getElementById('squadra-lista-operai').innerText.includes('Aggiungi prima')) {
+            renderizzaListaSquadra();
+        }
 
         // --- CALCOLO PAGHE E GIORNI LAVORATI AL MESE ---
         const meseSelezionato = document.getElementById('filtro-mese').value || meseCorrenteISO;
@@ -1288,7 +1355,6 @@
         let previsioneUtileComplessivo = 0;
         let htmlDashCantieri = '';
 
-        // Calcola costo medio giornaliero aziendale (se non ci sono ancora ore sul cantiere)
         const mediaPagaAziendale = db.operai.length 
             ? db.operai.reduce((acc, o) => acc + o.pagaGiornaliera, 0) / db.operai.length 
             : 130;
@@ -1305,7 +1371,6 @@
             const giorniMancanti = Math.max(0, giorniRichiesti - giorniFattiEquiv);
             const oreMancanti = Math.max(0, oreRichieste - oreFatte);
 
-            // Calcolo costo medio orario effettivo su questo cantiere (o media aziendale se a 0)
             const costoOrarioMedio = oreFatte > 0 ? (costoManodoperaAdOggi / oreFatte) : (mediaPagaAziendale / ORE_PER_GIORNO);
             const costoManodoperaMancante = oreMancanti * costoOrarioMedio;
 
