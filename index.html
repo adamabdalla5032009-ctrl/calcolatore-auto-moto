@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CantierePro - Gestione Cantieri, Ore e Scadenze</title>
+    <title>CantierePro - Gestione Cantieri, Paghe e Scadenze</title>
     <style>
         :root {
             --primary: #ea580c;
@@ -114,7 +114,7 @@
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1140px;
             margin: 20px auto;
             padding: 0 15px;
         }
@@ -156,7 +156,7 @@
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
         }
 
         /* Quick 1-Click Box in Dashboard */
@@ -301,7 +301,7 @@
         }
 
         .badge {
-            padding: 4px 9px;
+            padding: 5px 10px;
             border-radius: 999px;
             font-size: 0.78rem;
             font-weight: 700;
@@ -323,37 +323,22 @@
             animation: pulseUrgent 1.8s infinite;
         }
 
-        /* Barra Progresso Budget */
-        .progress-wrapper {
-            width: 100%;
-            min-width: 130px;
-        }
-
-        .progress-bar-bg {
-            width: 100%;
-            height: 9px;
-            background: #e2e8f0;
-            border-radius: 999px;
-            overflow: hidden;
-            margin-bottom: 4px;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            border-radius: 999px;
-            transition: width 0.3s ease;
-        }
-
-        .progress-label {
-            font-size: 0.75rem;
-            color: var(--muted);
-            font-weight: 600;
+        /* Selettore Avanzamento Lavori in tabella */
+        .avanzamento-select {
+            padding: 6px 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            width: 95px;
+            background: #f8fafc;
+            cursor: pointer;
         }
 
         /* KPI Dashboard */
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
             gap: 15px;
             margin-bottom: 20px;
         }
@@ -373,7 +358,7 @@
         }
 
         .kpi-box strong {
-            font-size: 1.5rem;
+            font-size: 1.45rem;
             margin-top: 5px;
             display: block;
         }
@@ -407,11 +392,24 @@
             font-weight: 700;
         }
 
+        .month-picker-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .month-picker-wrap input[type="month"] {
+            width: auto;
+            padding: 6px 10px;
+            font-weight: 600;
+        }
+
         .text-success { color: var(--success); }
         .text-danger { color: var(--danger); }
         .empty-msg { color: var(--muted); font-style: italic; padding: 15px 0; text-align: center; }
 
-        /* Toast notifica rapida */
         #toast {
             position: fixed;
             bottom: 20px;
@@ -448,9 +446,9 @@
 
 <nav>
     <button class="active" onclick="cambiaTab('dashboard', this)">📊 Riepilogo</button>
-    <button onclick="cambiaTab('ore', this)">⏱️ Segna Ore (Squadra)</button>
-    <button onclick="cambiaTab('cantieri', this)">🏢 Cantieri & Utili</button>
-    <button onclick="cambiaTab('operai', this)">👷 Operai & Scadenze</button>
+    <button onclick="cambiaTab('ore', this)">⏱️ Segna Ore</button>
+    <button onclick="cambiaTab('cantieri', this)">🏢 Cantieri & Previsioni</button>
+    <button onclick="cambiaTab('operai', this)">👷 Operai, Paghe & Scadenze</button>
 </nav>
 
 <div class="container">
@@ -486,16 +484,34 @@
                 <strong id="kpi-cantieri">0</strong>
             </div>
             <div class="kpi-box">
-                <span>Ore Totali Registrate</span>
-                <strong id="kpi-ore">0 h</strong>
+                <span>Paghe Operai (Mese Corrente)</span>
+                <strong id="kpi-paghe-mese">€ 0,00</strong>
             </div>
             <div class="kpi-box">
-                <span>Utile Totale Cantieri</span>
+                <span>Previsione Utile Finale Cantieri</span>
                 <strong id="kpi-utile">€ 0,00</strong>
             </div>
             <div class="kpi-box" style="border-left-color: var(--danger);">
                 <span>Urgenze Documenti</span>
                 <strong id="kpi-scadenze">0</strong>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🔮 Previsione Finale Cantieri: Guadagnerà o Perderà?</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cantiere</th>
+                            <th>Preventivo</th>
+                            <th>Lavori Fatti</th>
+                            <th>Costo Finale Stimato</th>
+                            <th>Previsione a Fine Lavoro</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dash-cantieri-list"></tbody>
+                </table>
             </div>
         </div>
 
@@ -515,27 +531,9 @@
                 </table>
             </div>
         </div>
-
-        <div class="card">
-            <h2>💰 Stato Economico e Consumo Budget Cantieri</h2>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Cantiere</th>
-                            <th>Preventivo</th>
-                            <th>Costi Totali</th>
-                            <th>Consumo Budget</th>
-                            <th>Utile / Perdita</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dash-cantieri-list"></tbody>
-                </table>
-            </div>
-        </div>
     </div>
 
-    <!-- TAB 2: SEGNA ORE (SQUADRA + SINGOLO) -->
+    <!-- TAB 2: SEGNA ORE -->
     <div id="ore" class="section">
         <div class="grid-2">
             <!-- INSERIMENTO SQUADRA IN BLOCCO -->
@@ -552,9 +550,9 @@
                             <select id="squadra-cantiere" required></select>
                         </div>
                     </div>
-                    <span class="help-text" style="margin-bottom: 12px;">Imposta <strong>0</strong> per gli operai assenti o assegnati ad altro cantiere.</span>
+                    <span class="help-text" style="margin-bottom: 12px;">Metti <strong>0</strong> per chi era assente o in un altro cantiere.</span>
                     <div id="squadra-lista-operai"></div>
-                    <button type="submit" class="btn-primary" style="margin-top: 10px;">✓ Salva Tutte le Presenze del Giorno</button>
+                    <button type="submit" class="btn-primary" style="margin-top: 10px;">✓ Salva Presenze del Giorno</button>
                 </form>
             </div>
 
@@ -598,7 +596,7 @@
                             <th>Operaio</th>
                             <th>Cantiere</th>
                             <th>Ore</th>
-                            <th>Costo</th>
+                            <th>Importo</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -608,7 +606,7 @@
         </div>
     </div>
 
-    <!-- TAB 3: CANTIERI E UTILI -->
+    <!-- TAB 3: CANTIERI E PREVISIONI -->
     <div id="cantieri" class="section">
         <div class="grid-2">
             <div class="card">
@@ -617,18 +615,36 @@
                     <div class="form-group">
                         <label>Nome Cantiere / Cliente</label>
                         <input type="text" id="cant-nome" placeholder="Es. Ristrutturazione Villa Rossi" required>
-                        <span class="help-text">Usa un nome chiaro per riconoscerlo subito da telefono.</span>
                     </div>
                     <div class="form-group">
-                        <label>Importo Preventivo / Ricavo Pattuito (€)</label>
+                        <label>Preventivo / Ricavo Pattuito (€)</label>
                         <input type="number" step="0.01" id="cant-ricavo" placeholder="25000" required>
-                        <span class="help-text">Il totale che il cliente pagherà a fine lavoro (IVA esclusa).</span>
+                        <span class="help-text">Quanto pagherà il cliente a lavoro finito.</span>
                     </div>
-                    <div class="form-group">
-                        <label>Spese Materiali / Noleggi Iniziali (€)</label>
-                        <input type="number" step="0.01" id="cant-materiali" value="0" required>
-                        <span class="help-text">Eventuali costi già sostenuti all'apertura del cantiere.</span>
+                    <div class="grid-2" style="gap:10px;">
+                        <div class="form-group">
+                            <label>Materiali Iniziali (€)</label>
+                            <input type="number" step="0.01" id="cant-materiali" value="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label>% Lavori Già Fatti</label>
+                            <select id="cant-avanzamento">
+                                <option value="10">10% (Appena iniziato)</option>
+                                <option value="20">20%</option>
+                                <option value="25" selected>25% (Un quarto)</option>
+                                <option value="30">30%</option>
+                                <option value="40">40%</option>
+                                <option value="50">50% (A metà)</option>
+                                <option value="60">60%</option>
+                                <option value="70">70%</option>
+                                <option value="75">75% (Tre quarti)</option>
+                                <option value="80">80%</option>
+                                <option value="90">90% (Quasi finito)</option>
+                                <option value="100">100% (Finito)</option>
+                            </select>
+                        </div>
                     </div>
+                    <span class="help-text" style="margin-top:-8px; margin-bottom:10px;">Indica a che punto sei con i lavori: il sito calcolerà se alla fine guadagnerai o perderai.</span>
                     <button type="submit" class="btn-primary">+ Crea Cantiere</button>
                 </form>
             </div>
@@ -643,7 +659,7 @@
                     <div class="form-group">
                         <label>Importo Fattura / Materiali (€)</label>
                         <input type="number" step="0.01" id="spesa-importo" placeholder="450.00" required>
-                        <span class="help-text">Cemento, ferro, piastrelle, noleggio ponteggi, smaltimento macerie, ecc.</span>
+                        <span class="help-text">Cemento, ferro, piastrelle, noleggio ponteggi, smaltimento, ecc.</span>
                     </div>
                     <button type="submit" class="btn-primary">Aggiungi Costo Materiali</button>
                 </form>
@@ -651,18 +667,18 @@
         </div>
 
         <div class="card">
-            <h2>📊 Bilancio Dettagliato Cantieri (Guadagno vs Perdita)</h2>
+            <h2>🔮 Calcolo Previsione Fine Cantiere (Guadagnerà o Perderà?)</h2>
+            <p class="help-text" style="margin-bottom: 14px;">Aggiorna la <strong>% Lavori Fatti</strong> man mano che procedi: il sistema stima i costi finali al 100% e ti avvisa se il cantiere andrà in utile o in perdita.</p>
             <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
                             <th>Cantiere</th>
                             <th>Preventivo</th>
-                            <th>Manodopera</th>
-                            <th>Materiali</th>
-                            <th>Totale Costi</th>
-                            <th>Consumo Budget</th>
-                            <th>Utile / Perdita</th>
+                            <th>Spese Ad Oggi (Ore+Mat)</th>
+                            <th>% Lavori Fatti</th>
+                            <th>Costo Finale Stimato</th>
+                            <th>Previsione Finale</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -672,8 +688,34 @@
         </div>
     </div>
 
-    <!-- TAB 4: OPERAI E SCADENZE -->
+    <!-- TAB 4: OPERAI, PAGHE MENSILI E SCADENZE -->
     <div id="operai" class="section">
+        <!-- TABELLA PAGHE E GIORNI LAVORATI AL MESE -->
+        <div class="card" style="border-top: 4px solid var(--primary);">
+            <h2>
+                <span>💶 Riepilogo Fine Mese: Giorni Lavorati e Quanto Dare a Ogni Operaio</span>
+                <div class="month-picker-wrap">
+                    <label for="filtro-mese" style="margin:0;">Mese:</label>
+                    <input type="month" id="filtro-mese" onchange="aggiornaUI()">
+                </div>
+            </h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Operaio</th>
+                            <th>Qualifica</th>
+                            <th>Paga / Costo Orario</th>
+                            <th>Giorni Lavorati</th>
+                            <th>Ore nel Mese</th>
+                            <th>Totale da Dare a Fine Mese</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-paghe-mese"></tbody>
+                </table>
+            </div>
+        </div>
+
         <div class="grid-2">
             <div class="card">
                 <h2>👷 Aggiungi Operaio</h2>
@@ -687,9 +729,9 @@
                         <input type="text" id="op-ruolo" placeholder="Es. Muratore / Capocantiere" required>
                     </div>
                     <div class="form-group">
-                        <label>Costo Orario Aziendale (€/ora)</label>
-                        <input type="number" step="0.5" id="op-costo" placeholder="22.00" required>
-                        <span class="help-text">Inserisci paga lorda + contributi/INAIL/Cassa Edile stimati all'ora.</span>
+                        <label>Paga / Costo Orario (€/ora)</label>
+                        <input type="number" step="0.5" id="op-costo" placeholder="15.00" required>
+                        <span class="help-text">Inserisci quanto gli dai all'ora (o il costo orario aziendale).</span>
                     </div>
                     <button type="submit" class="btn-primary">+ Salva Operaio</button>
                 </form>
@@ -716,7 +758,7 @@
                     <div class="form-group">
                         <label>Data di Scadenza</label>
                         <input type="date" id="doc-scadenza" required>
-                        <span class="help-text">Il sistema avviserà automaticamente 30 giorni prima della scadenza.</span>
+                        <span class="help-text">Avviso automatico 30 giorni prima della scadenza.</span>
                     </div>
                     <button type="submit" class="btn-primary">+ Registra Scadenza</button>
                 </form>
@@ -724,15 +766,15 @@
         </div>
 
         <div class="card">
-            <h2>👷 Elenco Operai e Costi Orari</h2>
+            <h2>👷 Gestione Anagrafica Operai</h2>
             <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
                             <th>Nome</th>
                             <th>Qualifica</th>
-                            <th>Costo Orario</th>
-                            <th>Ore Totali</th>
+                            <th>Paga / Costo Orario</th>
+                            <th>Ore Storiche Totali</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -742,7 +784,7 @@
         </div>
 
         <div class="card">
-            <h2>🗂️ Registro Completo Scadenze Documenti</h2>
+            <h2>🗂️ Registro Scadenze Documenti</h2>
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -772,9 +814,13 @@
         documenti: []
     };
 
-    const oggiISO = new Date().toISOString().slice(0, 10);
+    const oggiObj = new Date();
+    const oggiISO = oggiObj.toISOString().slice(0, 10);
+    const meseCorrenteISO = oggiObj.toISOString().slice(0, 7);
+
     document.getElementById('ore-data').value = oggiISO;
     document.getElementById('squadra-data').value = oggiISO;
+    document.getElementById('filtro-mese').value = meseCorrenteISO;
 
     function mostraToast(msg) {
         const t = document.getElementById('toast');
@@ -810,7 +856,11 @@
         if (db.cantieri.length > 0 && !confirm('Sovrascrivere i dati attuali con gli esempi dimostrativi?')) return;
 
         const oggi = new Date();
-        const dataStr = oggi.toISOString().slice(0, 10);
+        const meseStr = oggi.toISOString().slice(0, 7);
+        const g1 = `${meseStr}-02`;
+        const g2 = `${meseStr}-03`;
+        const g3 = `${meseStr}-04`;
+        const g4 = `${meseStr}-05`;
 
         const dataScaduta = new Date();
         dataScaduta.setDate(oggi.getDate() - 4);
@@ -823,19 +873,24 @@
 
         db = {
             operai: [
-                { id: 101, nome: "Marco Bianchi", ruolo: "Capocantiere", costoOrario: 26.00 },
-                { id: 102, nome: "Giuseppe Neri", ruolo: "Muratore Specializzato", costoOrario: 22.00 },
-                { id: 103, nome: "Luca Rossi", ruolo: "Manovale", costoOrario: 18.50 }
+                { id: 101, nome: "Marco Bianchi", ruolo: "Capocantiere", costoOrario: 20.00 },
+                { id: 102, nome: "Giuseppe Neri", ruolo: "Muratore Specializzato", costoOrario: 16.00 },
+                { id: 103, nome: "Luca Rossi", ruolo: "Manovale", costoOrario: 13.00 }
             ],
             cantieri: [
-                { id: 201, nome: "Ristrutturazione Villa Rossi", ricavo: 28000.00, materiali: 6400.00 },
-                { id: 202, nome: "Rifacimento Tetto Condominio Sole", ricavo: 12000.00, materiali: 9800.00 }
+                { id: 201, nome: "Ristrutturazione Villa Rossi", ricavo: 30000.00, materiali: 5200.00, avanzamento: 50 },
+                { id: 202, nome: "Rifacimento Tetto Condominio Sole", ricavo: 14000.00, materiali: 6800.00, avanzamento: 40 }
             ],
             ore: [
-                { id: 301, data: dataStr, cantiereId: 201, operaioId: 101, ore: 8, costoTotale: 208.00, note: "Direzione lavori e tracciamento" },
-                { id: 302, data: dataStr, cantiereId: 201, operaioId: 102, ore: 8, costoTotale: 176.00, note: "Posa tramezzi" },
-                { id: 303, data: dataStr, cantiereId: 202, operaioId: 102, ore: 60, costoTotale: 1320.00, note: "Settimana coperture" },
-                { id: 304, data: dataStr, cantiereId: 202, operaioId: 103, ore: 65, costoTotale: 1202.50, note: "Movimentazione materiali" }
+                { id: 301, data: g1, cantiereId: 201, operaioId: 101, ore: 8, costoTotale: 160.00, note: "Direzione lavori" },
+                { id: 302, data: g2, cantiereId: 201, operaioId: 101, ore: 8, costoTotale: 160.00, note: "Tracciamento" },
+                { id: 303, data: g3, cantiereId: 201, operaioId: 101, ore: 8, costoTotale: 160.00, note: "Controllo gettata" },
+                { id: 304, data: g1, cantiereId: 201, operaioId: 102, ore: 8, costoTotale: 128.00, note: "Posa tramezzi" },
+                { id: 305, data: g2, cantiereId: 201, operaioId: 102, ore: 8.5, costoTotale: 136.00, note: "Intonaci" },
+                { id: 306, data: g3, cantiereId: 202, operaioId: 102, ore: 8, costoTotale: 128.00, note: "Smontaggio tegole" },
+                { id: 307, data: g4, cantiereId: 202, operaioId: 102, ore: 8, costoTotale: 128.00, note: "Guaina tetto" },
+                { id: 308, data: g3, cantiereId: 202, operaioId: 103, ore: 8, costoTotale: 104.00, note: "Movimentazione" },
+                { id: 309, data: g4, cantiereId: 202, operaioId: 103, ore: 8, costoTotale: 104.00, note: "Pulizia cantiere" }
             ],
             documenti: [
                 { id: 401, operaioId: 101, tipo: "Visita Medica / Idoneità", scadenza: dataUrgente7gg.toISOString().slice(0, 10) },
@@ -930,19 +985,30 @@
         salvaDB();
     }
 
-    // --- CANTIERI ---
+    // --- CANTIERI & PREVISIONE ---
     function aggiungiCantiere(e) {
         e.preventDefault();
         db.cantieri.push({
             id: Date.now(),
             nome: document.getElementById('cant-nome').value.trim(),
             ricavo: parseFloat(document.getElementById('cant-ricavo').value),
-            materiali: parseFloat(document.getElementById('cant-materiali').value) || 0
+            materiali: parseFloat(document.getElementById('cant-materiali').value) || 0,
+            avanzamento: parseInt(document.getElementById('cant-avanzamento').value) || 25
         });
         e.target.reset();
         document.getElementById('cant-materiali').value = 0;
+        document.getElementById('cant-avanzamento').value = 25;
         salvaDB();
         mostraToast('🏢 Cantiere creato!');
+    }
+
+    function aggiornaAvanzamento(cantId, nuovaPerc) {
+        const cantiere = db.cantieri.find(c => c.id === cantId);
+        if (cantiere) {
+            cantiere.avanzamento = parseInt(nuovaPerc);
+            salvaDB();
+            mostraToast(`📊 Avanzamento aggiornato al ${nuovaPerc}%`);
+        }
     }
 
     function aggiungiSpesaMateriale(e) {
@@ -1030,21 +1096,9 @@
         }
     }
 
-    function creaBarraBudget(costi, ricavo) {
-        const perc = ricavo > 0 ? Math.round((costi / ricavo) * 100) : 100;
-        const width = Math.min(perc, 100);
-        let color = '#16a34a'; // Verde
-        if (perc >= 100) color = '#dc2626'; // Rosso (Perdita)
-        else if (perc >= 80) color = '#d97706'; // Giallo (Attenzione)
-
-        return `
-            <div class="progress-wrapper">
-                <div class="progress-bar-bg">
-                    <div class="progress-bar-fill" style="width: ${width}%; background: ${color};"></div>
-                </div>
-                <div class="progress-label">${perc}% del budget speso</div>
-            </div>
-        `;
+    function opzioniAvanzamentoHTML(valoreAttuale) {
+        const steps = [10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100];
+        return steps.map(s => `<option value="${s}" ${s === valoreAttuale ? 'selected' : ''}>${s}%</option>`).join('');
     }
 
     // --- AGGIORNAMENTO INTERFACCIA ---
@@ -1078,9 +1132,35 @@
                     <input type="number" class="squadra-input" data-opid="${o.id}" step="0.5" min="0" max="24" value="8">
                 </div>
             `).join('')
-            : '<p class="empty-msg">Aggiungi prima gli operai nella scheda "Operai & Scadenze".</p>';
+            : '<p class="empty-msg">Aggiungi prima gli operai nella scheda "Operai, Paghe & Scadenze".</p>';
 
-        // Tabella Operai
+        // --- CALCOLO PAGHE E GIORNI LAVORATI AL MESE ---
+        const meseSelezionato = document.getElementById('filtro-mese').value || meseCorrenteISO;
+        let totalePagheMeseCorrente = 0;
+
+        document.getElementById('lista-paghe-mese').innerHTML = db.operai.length ? db.operai.map(o => {
+            const oreMeseRecords = db.ore.filter(x => x.operaioId === o.id && x.data && x.data.startsWith(meseSelezionato));
+            // Conta i giorni unici in cui l'operaio ha lavorato in quel mese
+            const giorniUnici = new Set(oreMeseRecords.map(x => x.data)).size;
+            const oreMese = oreMeseRecords.reduce((acc, x) => acc + x.ore, 0);
+            const soldiDaDare = oreMeseRecords.reduce((acc, x) => acc + x.costoTotale, 0);
+
+            return `<tr>
+                <td><strong>${o.nome}</strong></td>
+                <td>${o.ruolo}</td>
+                <td>${formatEuro(o.costoOrario)}/h</td>
+                <td><strong>${giorniUnici} giorni</strong></td>
+                <td>${oreMese} h</td>
+                <td><span class="badge badge-ok" style="font-size:0.9rem;">${formatEuro(soldiDaDare)}</span></td>
+            </tr>`;
+        }).join('') : '<tr><td colspan="6" class="empty-msg">Nessun operaio inserito.</td></tr>';
+
+        // Calcola totale paghe del mese attuale per KPI Dashboard
+        db.ore.filter(x => x.data && x.data.startsWith(meseCorrenteISO)).forEach(x => {
+            totalePagheMeseCorrente += x.costoTotale;
+        });
+
+        // Tabella Anagrafica Operai
         document.getElementById('lista-operai').innerHTML = db.operai.length ? db.operai.map(o => {
             const oreOp = db.ore.filter(x => x.operaioId === o.id).reduce((acc, x) => acc + x.ore, 0);
             return `<tr>
@@ -1123,43 +1203,49 @@
 
         document.getElementById('dash-scadenze-list').innerHTML = htmlAllerte || '<tr><td colspan="4" class="empty-msg">✅ Tutti i documenti sono in regola!</td></tr>';
 
-        // Tabella Cantieri & Calcolo Utile/Perdita
-        let utileComplessivo = 0;
+        // --- TABELLA CANTIERI & PREVISIONE FUTURA (GUADAGNERÀ O PERDERÀ) ---
+        let previsioneUtileComplessivo = 0;
         let htmlDashCantieri = '';
 
         document.getElementById('lista-cantieri').innerHTML = db.cantieri.length ? db.cantieri.map(c => {
             const costoOre = db.ore.filter(x => x.cantiereId === c.id).reduce((acc, x) => acc + x.costoTotale, 0);
-            const costiTotali = costoOre + c.materiali;
-            const margine = c.ricavo - costiTotali;
-            utileComplessivo += margine;
+            const speseAdOggi = costoOre + c.materiali;
+            const perc = c.avanzamento || 25;
 
-            const isLoss = margine < 0;
-            const rowClass = isLoss ? 'row-loss' : '';
-            const classeMargine = isLoss ? 'text-danger' : 'text-success';
-            const badgeMargine = isLoss 
-                ? `<span class="badge badge-danger">${formatEuro(margine)} (IN PERDITA)</span>`
-                : `<span class="badge badge-ok">+ ${formatEuro(margine)} (IN UTILE)</span>`;
-            const barraBudget = creaBarraBudget(costiTotali, c.ricavo);
+            // Proiezione al 100% dei lavori
+            const costoFinaleStimato = speseAdOggi / (perc / 100);
+            const margineFinalePrevisto = c.ricavo - costoFinaleStimato;
+            previsioneUtileComplessivo += margineFinalePrevisto;
+
+            const willLose = margineFinalePrevisto < 0;
+            const rowClass = willLose ? 'row-loss' : '';
+
+            const badgePrevisione = willLose
+                ? `<span class="badge badge-danger">📉 PERDERÀ ${formatEuro(Math.abs(margineFinalePrevisto))}</span>`
+                : `<span class="badge badge-ok">📈 GUADAGNERÀ +${formatEuro(margineFinalePrevisto)}</span>`;
 
             htmlDashCantieri += `<tr class="${rowClass}">
                 <td><strong>${c.nome}</strong></td>
                 <td>${formatEuro(c.ricavo)}</td>
-                <td>${formatEuro(costiTotali)}</td>
-                <td>${barraBudget}</td>
-                <td>${badgeMargine}</td>
+                <td><strong>${perc}%</strong></td>
+                <td>${formatEuro(costoFinaleStimato)}</td>
+                <td>${badgePrevisione}</td>
             </tr>`;
 
             return `<tr class="${rowClass}">
                 <td><strong>${c.nome}</strong></td>
                 <td>${formatEuro(c.ricavo)}</td>
-                <td>${formatEuro(costoOre)}</td>
-                <td>${formatEuro(c.materiali)}</td>
-                <td><strong>${formatEuro(costiTotali)}</strong></td>
-                <td>${barraBudget}</td>
-                <td class="${classeMargine}"><strong>${formatEuro(margine)}</strong></td>
+                <td>${formatEuro(speseAdOggi)}<br><small style="color:#64748b">Ore: ${formatEuro(costoOre)} | Mat: ${formatEuro(c.materiali)}</small></td>
+                <td>
+                    <select class="avanzamento-select" onchange="aggiornaAvanzamento(${c.id}, this.value)">
+                        ${opzioniAvanzamentoHTML(perc)}
+                    </select>
+                </td>
+                <td><strong>${formatEuro(costoFinaleStimato)}</strong></td>
+                <td>${badgePrevisione}</td>
                 <td><button class="btn-danger" onclick="eliminaCantiere(${c.id})">Elimina</button></td>
             </tr>`;
-        }).join('') : '<tr><td colspan="8" class="empty-msg">Nessun cantiere creato.</td></tr>';
+        }).join('') : '<tr><td colspan="7" class="empty-msg">Nessun cantiere creato.</td></tr>';
 
         document.getElementById('dash-cantieri-list').innerHTML = htmlDashCantieri || '<tr><td colspan="5" class="empty-msg">Nessun cantiere attivo.</td></tr>';
 
@@ -1178,12 +1264,11 @@
         }).join('') : '<tr><td colspan="6" class="empty-msg">Nessuna ora registrata.</td></tr>';
 
         // Aggiorna KPI Dashboard
-        const oreTotali = db.ore.reduce((acc, x) => acc + x.ore, 0);
         document.getElementById('kpi-cantieri').innerText = db.cantieri.length;
-        document.getElementById('kpi-ore').innerText = oreTotali + ' h';
+        document.getElementById('kpi-paghe-mese').innerText = formatEuro(totalePagheMeseCorrente);
         const kpiUtileEl = document.getElementById('kpi-utile');
-        kpiUtileEl.innerText = formatEuro(utileComplessivo);
-        kpiUtileEl.className = utileComplessivo >= 0 ? 'text-success' : 'text-danger';
+        kpiUtileEl.innerText = formatEuro(previsioneUtileComplessivo);
+        kpiUtileEl.className = previsioneUtileComplessivo >= 0 ? 'text-success' : 'text-danger';
         document.getElementById('kpi-scadenze').innerText = countAllerte;
     }
 
