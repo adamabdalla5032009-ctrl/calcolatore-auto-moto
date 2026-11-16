@@ -28,7 +28,7 @@
         body {
             background-color: var(--bg);
             color: var(--text);
-            padding-bottom: 40px;
+            padding-bottom: 50px;
         }
 
         header {
@@ -56,20 +56,30 @@
         .backup-btns {
             display: flex;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .btn-small {
             background: #334155;
             color: white;
             border: none;
-            padding: 6px 12px;
+            padding: 7px 12px;
             border-radius: 6px;
             font-size: 0.85rem;
             cursor: pointer;
+            font-weight: 500;
         }
 
         .btn-small:hover {
             background: #475569;
+        }
+
+        .btn-example {
+            background: #0284c7;
+        }
+
+        .btn-example:hover {
+            background: #0369a1;
         }
 
         nav {
@@ -84,7 +94,7 @@
 
         nav button {
             flex: 1;
-            min-width: 110px;
+            min-width: 120px;
             padding: 14px 10px;
             background: none;
             border: none;
@@ -93,7 +103,7 @@
             color: var(--muted);
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.9rem;
+            font-size: 0.92rem;
             white-space: nowrap;
         }
 
@@ -142,18 +152,78 @@
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
-        .form-group {
+        /* Quick 1-Click Box in Dashboard */
+        .quick-box {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 1px solid #86efac;
+            border-left: 5px solid var(--success);
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin-bottom: 20px;
+        }
+
+        .quick-box h2 {
+            font-size: 1.05rem;
+            color: #14532d;
             margin-bottom: 12px;
+            border: none;
+            padding: 0;
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: 2fr 2fr 1fr 1.5fr;
+            gap: 10px;
+            align-items: end;
+        }
+
+        @media (max-width: 768px) {
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .btn-quick {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 11px 16px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.95rem;
+            width: 100%;
+        }
+
+        .btn-quick:hover {
+            background: #15803d;
+        }
+
+        /* Form e Aiuti Contestuali */
+        .form-group {
+            margin-bottom: 14px;
         }
 
         label {
             display: block;
             font-size: 0.85rem;
             font-weight: 600;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             color: var(--text);
+        }
+
+        .help-text {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-top: 4px;
         }
 
         input, select {
@@ -162,6 +232,7 @@
             border: 1px solid var(--border);
             border-radius: 6px;
             font-size: 0.95rem;
+            background: white;
         }
 
         input:focus, select:focus {
@@ -173,7 +244,7 @@
             background: var(--primary);
             color: white;
             border: none;
-            padding: 11px 18px;
+            padding: 12px 18px;
             border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
@@ -190,13 +261,14 @@
             background: #fee2e2;
             color: var(--danger);
             border: none;
-            padding: 5px 10px;
+            padding: 6px 10px;
             border-radius: 5px;
             cursor: pointer;
             font-size: 0.8rem;
             font-weight: 600;
         }
 
+        /* Tabelle ed Evidenze Visive */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -207,6 +279,7 @@
             text-align: left;
             padding: 12px 10px;
             border-bottom: 1px solid var(--border);
+            vertical-align: middle;
         }
 
         th {
@@ -219,18 +292,65 @@
             overflow-x: auto;
         }
 
+        tr.row-loss {
+            background-color: #fef2f2;
+        }
+
+        tr.row-urgent {
+            background-color: #fff1f2;
+        }
+
         .badge {
-            padding: 4px 8px;
+            padding: 4px 9px;
             border-radius: 999px;
             font-size: 0.78rem;
             font-weight: 700;
             display: inline-block;
+            white-space: nowrap;
         }
 
         .badge-ok { background: #dcfce7; color: var(--success); }
         .badge-warn { background: #fef3c7; color: var(--warning); }
         .badge-danger { background: #fee2e2; color: var(--danger); }
 
+        @keyframes pulseUrgent {
+            0% { opacity: 1; }
+            50% { opacity: 0.55; }
+            100% { opacity: 1; }
+        }
+
+        .badge-pulse {
+            animation: pulseUrgent 1.8s infinite;
+        }
+
+        /* Barra Progresso Budget */
+        .progress-wrapper {
+            width: 100%;
+            min-width: 130px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 9px;
+            background: #e2e8f0;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 4px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 999px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-label {
+            font-size: 0.75rem;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        /* KPI Dashboard */
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -258,35 +378,59 @@
             display: block;
         }
 
+        /* Riga Squadra Presenze */
+        .squadra-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: #f8fafc;
+            gap: 10px;
+        }
+
+        .squadra-info strong {
+            display: block;
+            font-size: 0.95rem;
+        }
+
+        .squadra-info small {
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+
+        .squadra-input {
+            width: 95px;
+            text-align: center;
+            font-weight: 700;
+        }
+
         .text-success { color: var(--success); }
         .text-danger { color: var(--danger); }
         .empty-msg { color: var(--muted); font-style: italic; padding: 15px 0; text-align: center; }
 
-        /* Stili per la Guida */
-        .guide-step {
-            background: #f8fafc;
-            border-left: 4px solid var(--primary);
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 0 8px 8px 0;
-        }
-        .guide-step h3 {
-            font-size: 1rem;
-            color: var(--primary-dark);
-            margin-bottom: 5px;
-        }
-        .guide-step p {
+        /* Toast notifica rapida */
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #0f172a;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 8px;
             font-size: 0.9rem;
-            color: var(--muted);
-            line-height: 1.4;
-            margin-bottom: 8px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s;
+            z-index: 100;
         }
-        .guide-example {
-            background: #fff;
-            padding: 10px;
-            border: 1px dashed var(--border);
-            border-radius: 6px;
-            font-size: 0.85rem;
+
+        #toast.show {
+            opacity: 1;
         }
     </style>
 </head>
@@ -295,7 +439,7 @@
 <header>
     <h1>🏗️ Cantiere<span>Pro</span></h1>
     <div class="backup-btns">
-        <button class="btn-small" onclick="caricaDatiEsempio()">💡 Carica Dati Esempio</button>
+        <button class="btn-small btn-example" onclick="caricaDatiEsempio()">💡 Carica Dati Esempio</button>
         <button class="btn-small" onclick="esportaDati()">⬇️ Salva Backup</button>
         <button class="btn-small" onclick="document.getElementById('importFile').click()">⬆️ Ripristina</button>
         <input type="file" id="importFile" style="display:none" accept=".json" onchange="importaDati(event)">
@@ -304,16 +448,38 @@
 
 <nav>
     <button class="active" onclick="cambiaTab('dashboard', this)">📊 Riepilogo</button>
-    <button onclick="cambiaTab('ore', this)">⏱️ Segna Ore</button>
+    <button onclick="cambiaTab('ore', this)">⏱️ Segna Ore (Squadra)</button>
     <button onclick="cambiaTab('cantieri', this)">🏢 Cantieri & Utili</button>
     <button onclick="cambiaTab('operai', this)">👷 Operai & Scadenze</button>
-    <button onclick="cambiaTab('guida', this)">📖 Guida & Esempi</button>
 </nav>
 
 <div class="container">
 
     <!-- TAB 1: DASHBOARD -->
     <div id="dashboard" class="section active">
+
+        <!-- WIDGET REGISTRAZIONE RAPIDA 1-CLICK -->
+        <div class="quick-box">
+            <h2>⚡ Registrazione Rapida Ore (Oggi)</h2>
+            <form onsubmit="registraRapido(event)" class="quick-grid">
+                <div>
+                    <label>Cantiere</label>
+                    <select id="quick-cantiere" required></select>
+                </div>
+                <div>
+                    <label>Operaio</label>
+                    <select id="quick-operaio" required></select>
+                </div>
+                <div>
+                    <label>Ore</label>
+                    <input type="number" id="quick-ore" step="0.5" min="0.5" max="24" value="8" required>
+                </div>
+                <div>
+                    <button type="submit" class="btn-quick">✓ Registra per Oggi</button>
+                </div>
+            </form>
+        </div>
+
         <div class="kpi-grid">
             <div class="kpi-box">
                 <span>Cantieri Attivi</span>
@@ -328,13 +494,13 @@
                 <strong id="kpi-utile">€ 0,00</strong>
             </div>
             <div class="kpi-box" style="border-left-color: var(--danger);">
-                <span>Documenti in Scadenza / Scaduti</span>
+                <span>Urgenze Documenti</span>
                 <strong id="kpi-scadenze">0</strong>
             </div>
         </div>
 
         <div class="card">
-            <h2>⚠️ Allerta Scadenze Documenti (Entro 30 giorni o Scaduti)</h2>
+            <h2>🚨 Urgenze Documenti (Scaduti o entro 30 giorni)</h2>
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -351,15 +517,16 @@
         </div>
 
         <div class="card">
-            <h2>💰 Stato Economico Cantieri</h2>
+            <h2>💰 Stato Economico e Consumo Budget Cantieri</h2>
             <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
                             <th>Cantiere</th>
-                            <th>Preventivo / Ricavo</th>
-                            <th>Costi (Ore + Materiali)</th>
-                            <th>Margine (Utile/Perdita)</th>
+                            <th>Preventivo</th>
+                            <th>Costi Totali</th>
+                            <th>Consumo Budget</th>
+                            <th>Utile / Perdita</th>
                         </tr>
                     </thead>
                     <tbody id="dash-cantieri-list"></tbody>
@@ -368,11 +535,32 @@
         </div>
     </div>
 
-    <!-- TAB 2: SEGNA ORE -->
+    <!-- TAB 2: SEGNA ORE (SQUADRA + SINGOLO) -->
     <div id="ore" class="section">
         <div class="grid-2">
+            <!-- INSERIMENTO SQUADRA IN BLOCCO -->
             <div class="card">
-                <h2>⏱️ Registra Ore Lavorate</h2>
+                <h2>👷‍♂️ Segna Presenze Squadra (In Blocco)</h2>
+                <form onsubmit="salvaPresenzeSquadra(event)">
+                    <div class="grid-2" style="gap:10px;">
+                        <div class="form-group">
+                            <label>Data Lavoro</label>
+                            <input type="date" id="squadra-data" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Cantiere</label>
+                            <select id="squadra-cantiere" required></select>
+                        </div>
+                    </div>
+                    <span class="help-text" style="margin-bottom: 12px;">Imposta <strong>0</strong> per gli operai assenti o assegnati ad altro cantiere.</span>
+                    <div id="squadra-lista-operai"></div>
+                    <button type="submit" class="btn-primary" style="margin-top: 10px;">✓ Salva Tutte le Presenze del Giorno</button>
+                </form>
+            </div>
+
+            <!-- INSERIMENTO SINGOLO CON NOTE -->
+            <div class="card">
+                <h2>⏱️ Registrazione Singola (con Note)</h2>
                 <form onsubmit="aggiungiOre(event)">
                     <div class="form-group">
                         <label>Data</label>
@@ -387,34 +575,35 @@
                         <select id="ore-operaio" required></select>
                     </div>
                     <div class="form-group">
-                        <label>Ore Lavorate (es. 8 o 8.5)</label>
-                        <input type="number" step="0.5" min="0.5" max="24" id="ore-quantita" placeholder="8" required>
+                        <label>Ore Lavorate</label>
+                        <input type="number" step="0.5" min="0.5" max="24" id="ore-quantita" value="8" required>
+                        <span class="help-text">Usa i decimali per le mezz'ore (es. 8.5 = 8 ore e mezza).</span>
                     </div>
                     <div class="form-group">
                         <label>Note lavoro svolto (opzionale)</label>
                         <input type="text" id="ore-note" placeholder="Es. Gettata pilastri, tramezzi...">
                     </div>
-                    <button type="submit" class="btn-primary">+ Registra Ore</button>
+                    <button type="submit" class="btn-primary">+ Registra Ore Singole</button>
                 </form>
             </div>
+        </div>
 
-            <div class="card">
-                <h2>📋 Ultime Registrazioni Ore</h2>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Operaio</th>
-                                <th>Cantiere</th>
-                                <th>Ore</th>
-                                <th>Costo</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="lista-ore"></tbody>
-                    </table>
-                </div>
+        <div class="card">
+            <h2>📋 Storico Registrazioni Ore</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Operaio</th>
+                            <th>Cantiere</th>
+                            <th>Ore</th>
+                            <th>Costo</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-ore"></tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -428,29 +617,33 @@
                     <div class="form-group">
                         <label>Nome Cantiere / Cliente</label>
                         <input type="text" id="cant-nome" placeholder="Es. Ristrutturazione Villa Rossi" required>
+                        <span class="help-text">Usa un nome chiaro per riconoscerlo subito da telefono.</span>
                     </div>
                     <div class="form-group">
                         <label>Importo Preventivo / Ricavo Pattuito (€)</label>
                         <input type="number" step="0.01" id="cant-ricavo" placeholder="25000" required>
+                        <span class="help-text">Il totale che il cliente pagherà a fine lavoro (IVA esclusa).</span>
                     </div>
                     <div class="form-group">
-                        <label>Costi Extra / Materiali / Noleggi iniziali (€)</label>
+                        <label>Spese Materiali / Noleggi Iniziali (€)</label>
                         <input type="number" step="0.01" id="cant-materiali" value="0" required>
+                        <span class="help-text">Eventuali costi già sostenuti all'apertura del cantiere.</span>
                     </div>
                     <button type="submit" class="btn-primary">+ Crea Cantiere</button>
                 </form>
             </div>
 
             <div class="card">
-                <h2>➕ Aggiungi Spesa Materiale a Cantiere</h2>
+                <h2>➕ Aggiungi Spesa Materiali a Cantiere</h2>
                 <form onsubmit="aggiungiSpesaMateriale(event)">
                     <div class="form-group">
                         <label>Seleziona Cantiere</label>
                         <select id="spesa-cantiere" required></select>
                     </div>
                     <div class="form-group">
-                        <label>Importo Spesa Materiali / Fattura (€)</label>
+                        <label>Importo Fattura / Materiali (€)</label>
                         <input type="number" step="0.01" id="spesa-importo" placeholder="450.00" required>
+                        <span class="help-text">Cemento, ferro, piastrelle, noleggio ponteggi, smaltimento macerie, ecc.</span>
                     </div>
                     <button type="submit" class="btn-primary">Aggiungi Costo Materiali</button>
                 </form>
@@ -464,10 +657,11 @@
                     <thead>
                         <tr>
                             <th>Cantiere</th>
-                            <th>Ricavo Pattuito</th>
-                            <th>Costo Manodopera</th>
-                            <th>Costo Materiali</th>
+                            <th>Preventivo</th>
+                            <th>Manodopera</th>
+                            <th>Materiali</th>
                             <th>Totale Costi</th>
+                            <th>Consumo Budget</th>
                             <th>Utile / Perdita</th>
                             <th></th>
                         </tr>
@@ -495,6 +689,7 @@
                     <div class="form-group">
                         <label>Costo Orario Aziendale (€/ora)</label>
                         <input type="number" step="0.5" id="op-costo" placeholder="22.00" required>
+                        <span class="help-text">Inserisci paga lorda + contributi/INAIL/Cassa Edile stimati all'ora.</span>
                     </div>
                     <button type="submit" class="btn-primary">+ Salva Operaio</button>
                 </form>
@@ -511,16 +706,17 @@
                         <label>Tipo Documento</label>
                         <select id="doc-tipo">
                             <option value="Visita Medica / Idoneità">Visita Medica / Idoneità</option>
-                            <option value="Corso Sicurezza Generale/Specifica">Corso Sicurezza (Art. 37)</option>
+                            <option value="Corso Sicurezza (Art. 37)">Corso Sicurezza (Art. 37)</option>
                             <option value="Patentino Gru / Mezzi / Ponteggi">Patentino Gru / Mezzi / Ponteggi</option>
                             <option value="Corso Primo Soccorso / Antincendio">Corso Primo Soccorso / Antincendio</option>
                             <option value="UNILAV / Contratto a Termine">UNILAV / Contratto a Termine</option>
-                            <option value="Carta d'Identità / Permesso Soggiorno">Documento Identità / Permesso</option>
+                            <option value="Documento Identità / Permesso">Documento Identità / Permesso</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Data di Scadenza</label>
                         <input type="date" id="doc-scadenza" required>
+                        <span class="help-text">Il sistema avviserà automaticamente 30 giorni prima della scadenza.</span>
                     </div>
                     <button type="submit" class="btn-primary">+ Registra Scadenza</button>
                 </form>
@@ -564,55 +760,11 @@
         </div>
     </div>
 
-    <!-- TAB 5: GUIDA E SPIEGAZIONE GUIDATA -->
-    <div id="guida" class="section">
-        <div class="card">
-            <h2>📖 Guida Completa e Spiegazione Guidata</h2>
-            <p style="margin-bottom: 20px; color: var(--muted);">Benvenuto in CantierePro. Questa guida ti spiega passo dopo passo come sfruttare ogni sezione dell'applicazione per gestire la tua impresa edile, tenere d'occhio i guadagni e rispettare le normative sulla sicurezza.</p>
-            
-            <div class="guide-step">
-                <h3>1. Inserire gli Operai e il Costo Orario</h3>
-                <p>Prima di registrare le ore, vai nella scheda <strong>Operai & Scadenze</strong> e inserisci i tuoi dipendenti specificando il loro costo orario aziendale (es. 22€/h). Questo costo serve al sistema per calcolare automaticamente quanto costa all'impresa ogni singola ora lavorata in cantiere.</p>
-                <div class="guide-example">
-                    <strong>💡 Esempio pratico:</strong> Inserisci <em>Mario Rossi</em> come <em>Muratore</em> con costo orario <em>22,00 €</em>.
-                </div>
-            </div>
-
-            <div class="guide-step">
-                <h3>2. Creare un Cantiere e Fissare il Budget</h3>
-                <p>Vai su <strong>Cantieri & Utili</strong> e crea il cantiere inserendo il nome del cliente/lavoro e il preventivo totale pattuito (il ricavo che riceverai a fine opera).</p>
-                <div class="guide-example">
-                    <strong>💡 Esempio pratico:</strong> Crea il cantiere <em>Ristrutturazione Appartamento Verdi</em> con un ricavo pattuito di <em>15.000,00 €</em>.
-                </div>
-            </div>
-
-            <div class="guide-step">
-                <h3>3. Registrare le Ore e i Materiali (Calcolo Automatico Utile/Perdita)</h3>
-                <p>Ogni volta che si lavora, vai su <strong>Segna Ore</strong>, seleziona la data, il cantiere, l'operaio e inserisci le ore svolte. Il sistema calcola il costo della manodopera in tempo reale. Se compri materiali (es. sacchi di cemento, piastrelle), vai su <strong>Cantieri & Utili</strong> e aggiungi la spesa.</p>
-                <div class="guide-example">
-                    <strong>💡 Esempio pratico:</strong> Mario Rossi lavora 8 ore su Appartamento Verdi. Il sistema calcola 8h × 22€ = <em>176,00 €</em> di manodopera aggiunti automaticamente ai costi di quel cantiere.
-                </div>
-            </div>
-
-            <div class="guide-step">
-                <h3>4. Monitorare le Scadenze dei Documenti</h3>
-                <p>Nella scheda <strong>Operai & Scadenze</strong> puoi registrare le scadenze critiche (visite mediche, corsi sicurezza art. 37, patentini gru). Il sistema ti avviserà in automatico nella <strong>Dashboard</strong> principale colorandosi di giallo (se scade entro 30 giorni) o di rosso (se già scaduto).</p>
-                <div class="guide-example">
-                    <strong>💡 Esempio pratico:</strong> Registra la "Visita Medica" di Mario Rossi con scadenza tra 10 giorni. Apparirà subito l'allerta in cima alla schermata principale per evitare multe in cantiere.
-                </div>
-            </div>
-
-            <div class="guide-step">
-                <h3>5. Prova Subito con un Clic!</h3>
-                <p>Se vuoi vedere subito il programma popolato di dati realistici senza dover inserire tutto a mano, clicca sul pulsante in alto a destra <strong>"💡 Carica Dati Esempio"</strong>. Potrai testare subito grafici, bilanci e scadenze.</p>
-            </div>
-        </div>
-    </div>
-
 </div>
 
+<div id="toast">Operazione completata!</div>
+
 <script>
-    // Stato dell'applicazione salvato in LocalStorage
     let db = JSON.parse(localStorage.getItem('cantiereProDB')) || {
         operai: [],
         cantieri: [],
@@ -620,8 +772,16 @@
         documenti: []
     };
 
-    // Imposta data odierna di default nel form ore
-    document.getElementById('ore-data').valueAsDate = new Date();
+    const oggiISO = new Date().toISOString().slice(0, 10);
+    document.getElementById('ore-data').value = oggiISO;
+    document.getElementById('squadra-data').value = oggiISO;
+
+    function mostraToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2500);
+    }
 
     function salvaDB() {
         localStorage.setItem('cantiereProDB', JSON.stringify(db));
@@ -645,45 +805,109 @@
         return `${d}/${m}/${y}`;
     }
 
-    // --- FUNZIONE DATI DI ESEMPIO ---
+    // --- CARICA DATI ESEMPIO ---
     function caricaDatiEsempio() {
-        if (!confirm('Vuoi caricare dati di esempio realistici per testare tutte le funzioni?')) return;
-        
+        if (db.cantieri.length > 0 && !confirm('Sovrascrivere i dati attuali con gli esempi dimostrativi?')) return;
+
         const oggi = new Date();
-        const dataStr = oggi.toISOString().slice(0,10);
-        
-        // Data passata per scadenza
+        const dataStr = oggi.toISOString().slice(0, 10);
+
         const dataScaduta = new Date();
-        dataScaduta.setDate(oggi.getDate() - 5);
-        
-        // Data vicina alla scadenza (tra 10 giorni)
-        const dataImminente = new Date();
-        dataImminente.setDate(oggi.getDate() + 10);
+        dataScaduta.setDate(oggi.getDate() - 4);
+
+        const dataUrgente7gg = new Date();
+        dataUrgente7gg.setDate(oggi.getDate() + 5);
+
+        const dataAvviso25gg = new Date();
+        dataAvviso25gg.setDate(oggi.getDate() + 22);
 
         db = {
             operai: [
-                { id: 101, nome: "Marco Bianchi", ruolo: "Capocantiere", costoOrario: 25.00 },
+                { id: 101, nome: "Marco Bianchi", ruolo: "Capocantiere", costoOrario: 26.00 },
                 { id: 102, nome: "Giuseppe Neri", ruolo: "Muratore Specializzato", costoOrario: 22.00 },
-                { id: 103, nome: "Luca Rossi", ruolo: "Manovale", costoOrario: 18.00 }
+                { id: 103, nome: "Luca Rossi", ruolo: "Manovale", costoOrario: 18.50 }
             ],
             cantieri: [
-                { id: 201, nome: "Ristrutturazione Villa Rossi", ricavo: 28000.00, materiali: 4200.00 },
-                { id: 202, nome: "Costruzione Box Auto Via Roma", ricavo: 14500.00, materiali: 3100.00 }
+                { id: 201, nome: "Ristrutturazione Villa Rossi", ricavo: 28000.00, materiali: 6400.00 },
+                { id: 202, nome: "Rifacimento Tetto Condominio Sole", ricavo: 12000.00, materiali: 9800.00 }
             ],
             ore: [
-                { id: 301, data: dataStr, cantiereId: 201, operaioId: 101, ore: 8, costoTotale: 200.00, note: "Direzione lavori e tracciamento" },
-                { id: 302, data: dataStr, cantiereId: 201, operaioId: 102, ore: 8, costoTotale: 176.00, note: "Posa tramezzi in mattone" },
-                { id: 303, data: dataStr, cantiereId: 202, operaioId: 103, ore: 6, costoTotale: 108.00, note: "Scavo e pulizia area" }
+                { id: 301, data: dataStr, cantiereId: 201, operaioId: 101, ore: 8, costoTotale: 208.00, note: "Direzione lavori e tracciamento" },
+                { id: 302, data: dataStr, cantiereId: 201, operaioId: 102, ore: 8, costoTotale: 176.00, note: "Posa tramezzi" },
+                { id: 303, data: dataStr, cantiereId: 202, operaioId: 102, ore: 60, costoTotale: 1320.00, note: "Settimana coperture" },
+                { id: 304, data: dataStr, cantiereId: 202, operaioId: 103, ore: 65, costoTotale: 1202.50, note: "Movimentazione materiali" }
             ],
             documenti: [
-                { id: 401, operaioId: 101, tipo: "Visita Medica / Idoneità", scadenza: dataImminente.toISOString().slice(0,10) },
-                { id: 402, operaioId: 102, tipo: "Corso Sicurezza (Art. 37)", scadenza: dataScaduta.toISOString().slice(0,10) },
-                { id: 403, operaioId: 103, tipo: "Patentino Gru / Mezzi", scadenza: "2027-12-31" }
+                { id: 401, operaioId: 101, tipo: "Visita Medica / Idoneità", scadenza: dataUrgente7gg.toISOString().slice(0, 10) },
+                { id: 402, operaioId: 102, tipo: "Corso Sicurezza (Art. 37)", scadenza: dataScaduta.toISOString().slice(0, 10) },
+                { id: 403, operaioId: 103, tipo: "Patentino Gru / Mezzi", scadenza: dataAvviso25gg.toISOString().slice(0, 10) }
             ]
         };
 
         salvaDB();
-        alert('Dati di esempio caricati con successo! Esplora le varie schede per vederli in azione.');
+        mostraToast('💡 Dati di esempio caricati!');
+    }
+
+    // --- REGISTRAZIONE RAPIDA 1-CLICK ---
+    function registraRapido(e) {
+        e.preventDefault();
+        const cantId = Number(document.getElementById('quick-cantiere').value);
+        const opId = Number(document.getElementById('quick-operaio').value);
+        const oreLavorate = parseFloat(document.getElementById('quick-ore').value);
+        const operaio = db.operai.find(o => o.id === opId);
+
+        if (!cantId || !operaio) {
+            return alert('Crea prima almeno un cantiere e un operaio!');
+        }
+
+        db.ore.unshift({
+            id: Date.now(),
+            data: new Date().toISOString().slice(0, 10),
+            cantiereId: cantId,
+            operaioId: opId,
+            ore: oreLavorate,
+            costoTotale: oreLavorate * operaio.costoOrario,
+            note: 'Registrazione rapida'
+        });
+
+        salvaDB();
+        mostraToast(`✓ Registrate ${oreLavorate}h per ${operaio.nome}`);
+    }
+
+    // --- PRESENZE SQUADRA IN BLOCCO ---
+    function salvaPresenzeSquadra(e) {
+        e.preventDefault();
+        const data = document.getElementById('squadra-data').value;
+        const cantId = Number(document.getElementById('squadra-cantiere').value);
+
+        if (!cantId) return alert('Seleziona un cantiere valido.');
+
+        const inputs = document.querySelectorAll('.squadra-input');
+        let registrati = 0;
+
+        inputs.forEach(inp => {
+            const ore = parseFloat(inp.value) || 0;
+            if (ore > 0) {
+                const opId = Number(inp.dataset.opid);
+                const operaio = db.operai.find(o => o.id === opId);
+                if (operaio) {
+                    db.ore.unshift({
+                        id: Date.now() + opId,
+                        data: data,
+                        cantiereId: cantId,
+                        operaioId: opId,
+                        ore: ore,
+                        costoTotale: ore * operaio.costoOrario,
+                        note: 'Presenza squadra'
+                    });
+                    registrati++;
+                }
+            }
+        });
+
+        if (registrati === 0) return alert('Inserisci almeno 1 ora per almeno un operaio.');
+        salvaDB();
+        mostraToast(`✓ Registrate presenze per ${registrati} operai!`);
     }
 
     // --- OPERAI ---
@@ -697,6 +921,7 @@
         });
         e.target.reset();
         salvaDB();
+        mostraToast('👷 Operaio aggiunto!');
     }
 
     function eliminaOperaio(id) {
@@ -717,6 +942,7 @@
         e.target.reset();
         document.getElementById('cant-materiali').value = 0;
         salvaDB();
+        mostraToast('🏢 Cantiere creato!');
     }
 
     function aggiungiSpesaMateriale(e) {
@@ -728,6 +954,7 @@
             cantiere.materiali += importo;
             e.target.reset();
             salvaDB();
+            mostraToast('➕ Spesa materiali aggiunta!');
         }
     }
 
@@ -737,7 +964,7 @@
         salvaDB();
     }
 
-    // --- ORE ---
+    // --- ORE SINGOLE ---
     function aggiungiOre(e) {
         e.preventDefault();
         const opId = Number(document.getElementById('ore-operaio').value);
@@ -757,9 +984,9 @@
             note: document.getElementById('ore-note').value.trim()
         });
 
-        document.getElementById('ore-quantita').value = '';
         document.getElementById('ore-note').value = '';
         salvaDB();
+        mostraToast('⏱️ Ore registrate!');
     }
 
     function eliminaOre(id) {
@@ -778,6 +1005,7 @@
         });
         e.target.reset();
         salvaDB();
+        mostraToast('📄 Scadenza registrata!');
     }
 
     function eliminaDocumento(id) {
@@ -792,33 +1020,65 @@
         const diffGiorni = Math.ceil((scad - oggi) / (1000 * 60 * 60 * 24));
 
         if (diffGiorni < 0) {
-            return { testo: `SCADUTO da ${Math.abs(diffGiorni)} gg`, classe: 'badge-danger', allerta: true };
+            return { testo: `SCADUTO da ${Math.abs(diffGiorni)} gg`, classe: 'badge-danger badge-pulse', allerta: true, urgente: true };
+        } else if (diffGiorni <= 7) {
+            return { testo: `URGENTE: scade tra ${diffGiorni} gg`, classe: 'badge-danger badge-pulse', allerta: true, urgente: true };
         } else if (diffGiorni <= 30) {
-            return { testo: `Scade tra ${diffGiorni} gg`, classe: 'badge-warn', allerta: true };
+            return { testo: `Scade tra ${diffGiorni} gg`, classe: 'badge-warn', allerta: true, urgente: false };
         } else {
-            return { testo: 'Valido', classe: 'badge-ok', allerta: false };
+            return { testo: 'Valido', classe: 'badge-ok', allerta: false, urgente: false };
         }
+    }
+
+    function creaBarraBudget(costi, ricavo) {
+        const perc = ricavo > 0 ? Math.round((costi / ricavo) * 100) : 100;
+        const width = Math.min(perc, 100);
+        let color = '#16a34a'; // Verde
+        if (perc >= 100) color = '#dc2626'; // Rosso (Perdita)
+        else if (perc >= 80) color = '#d97706'; // Giallo (Attenzione)
+
+        return `
+            <div class="progress-wrapper">
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" style="width: ${width}%; background: ${color};"></div>
+                </div>
+                <div class="progress-label">${perc}% del budget speso</div>
+            </div>
+        `;
     }
 
     // --- AGGIORNAMENTO INTERFACCIA ---
     function aggiornaUI() {
-        // Popola Select
-        const selCantOre = document.getElementById('ore-cantiere');
-        const selCantSpesa = document.getElementById('spesa-cantiere');
-        const selOpOre = document.getElementById('ore-operaio');
-        const selOpDoc = document.getElementById('doc-operaio');
-
         const optCantieri = db.cantieri.length 
             ? db.cantieri.map(c => `<option value="${c.id}">${c.nome}</option>`).join('')
             : '<option value="">-- Crea prima un cantiere --</option>';
-        selCantOre.innerHTML = optCantieri;
-        selCantSpesa.innerHTML = optCantieri;
+
+        ['ore-cantiere', 'spesa-cantiere', 'quick-cantiere', 'squadra-cantiere'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = optCantieri;
+        });
 
         const optOperai = db.operai.length
             ? db.operai.map(o => `<option value="${o.id}">${o.nome} (${formatEuro(o.costoOrario)}/h)</option>`).join('')
             : '<option value="">-- Aggiungi prima un operaio --</option>';
-        selOpOre.innerHTML = optOperai;
-        selOpDoc.innerHTML = optOperai;
+
+        ['ore-operaio', 'doc-operaio', 'quick-operaio'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = optOperai;
+        });
+
+        // Lista Squadra
+        document.getElementById('squadra-lista-operai').innerHTML = db.operai.length
+            ? db.operai.map(o => `
+                <div class="squadra-row">
+                    <div class="squadra-info">
+                        <strong>${o.nome}</strong>
+                        <small>${o.ruolo} • ${formatEuro(o.costoOrario)}/ora</small>
+                    </div>
+                    <input type="number" class="squadra-input" data-opid="${o.id}" step="0.5" min="0" max="24" value="8">
+                </div>
+            `).join('')
+            : '<p class="empty-msg">Aggiungi prima gli operai nella scheda "Operai & Scadenze".</p>';
 
         // Tabella Operai
         document.getElementById('lista-operai').innerHTML = db.operai.length ? db.operai.map(o => {
@@ -841,16 +1101,18 @@
             const op = db.operai.find(o => o.id === d.operaioId);
             const nomeOp = op ? op.nome : 'Operaio rimosso';
             const stato = statoScadenza(d.scadenza);
+            const rowClass = stato.urgente ? 'row-urgent' : '';
+
             if (stato.allerta) {
                 countAllerte++;
-                htmlAllerte += `<tr>
+                htmlAllerte += `<tr class="${rowClass}">
                     <td><strong>${nomeOp}</strong></td>
                     <td>${d.tipo}</td>
                     <td>${formatData(d.scadenza)}</td>
                     <td><span class="badge ${stato.classe}">${stato.testo}</span></td>
                 </tr>`;
             }
-            return `<tr>
+            return `<tr class="${rowClass}">
                 <td><strong>${nomeOp}</strong></td>
                 <td>${d.tipo}</td>
                 <td>${formatData(d.scadenza)}</td>
@@ -871,30 +1133,35 @@
             const margine = c.ricavo - costiTotali;
             utileComplessivo += margine;
 
-            const classeMargine = margine >= 0 ? 'text-success' : 'text-danger';
-            const badgeMargine = margine >= 0 
-                ? `<span class="badge badge-ok">+ ${formatEuro(margine)} (IN UTILE)</span>`
-                : `<span class="badge badge-danger">${formatEuro(margine)} (IN PERDITA)</span>`;
+            const isLoss = margine < 0;
+            const rowClass = isLoss ? 'row-loss' : '';
+            const classeMargine = isLoss ? 'text-danger' : 'text-success';
+            const badgeMargine = isLoss 
+                ? `<span class="badge badge-danger">${formatEuro(margine)} (IN PERDITA)</span>`
+                : `<span class="badge badge-ok">+ ${formatEuro(margine)} (IN UTILE)</span>`;
+            const barraBudget = creaBarraBudget(costiTotali, c.ricavo);
 
-            htmlDashCantieri += `<tr>
+            htmlDashCantieri += `<tr class="${rowClass}">
                 <td><strong>${c.nome}</strong></td>
                 <td>${formatEuro(c.ricavo)}</td>
                 <td>${formatEuro(costiTotali)}</td>
+                <td>${barraBudget}</td>
                 <td>${badgeMargine}</td>
             </tr>`;
 
-            return `<tr>
+            return `<tr class="${rowClass}">
                 <td><strong>${c.nome}</strong></td>
                 <td>${formatEuro(c.ricavo)}</td>
                 <td>${formatEuro(costoOre)}</td>
                 <td>${formatEuro(c.materiali)}</td>
                 <td><strong>${formatEuro(costiTotali)}</strong></td>
+                <td>${barraBudget}</td>
                 <td class="${classeMargine}"><strong>${formatEuro(margine)}</strong></td>
                 <td><button class="btn-danger" onclick="eliminaCantiere(${c.id})">Elimina</button></td>
             </tr>`;
-        }).join('') : '<tr><td colspan="7" class="empty-msg">Nessun cantiere creato.</td></tr>';
+        }).join('') : '<tr><td colspan="8" class="empty-msg">Nessun cantiere creato.</td></tr>';
 
-        document.getElementById('dash-cantieri-list').innerHTML = htmlDashCantieri || '<tr><td colspan="4" class="empty-msg">Nessun cantiere attivo.</td></tr>';
+        document.getElementById('dash-cantieri-list').innerHTML = htmlDashCantieri || '<tr><td colspan="5" class="empty-msg">Nessun cantiere attivo.</td></tr>';
 
         // Tabella Ore
         document.getElementById('lista-ore').innerHTML = db.ore.length ? db.ore.map(r => {
@@ -941,7 +1208,7 @@
                 if (imported.operai && imported.cantieri && imported.ore && imported.documenti) {
                     db = imported;
                     salvaDB();
-                    alert('Backup ripristinato con successo!');
+                    mostraToast('✅ Backup ripristinato!');
                 } else {
                     alert('File di backup non valido.');
                 }
@@ -952,7 +1219,6 @@
         reader.readAsText(file);
     }
 
-    // Avvio iniziale
     aggiornaUI();
 </script>
 
