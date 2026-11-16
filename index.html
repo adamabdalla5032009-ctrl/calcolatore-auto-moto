@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CantierePro - Gestione Cantieri, Paghe e Scadenze</title>
+    <title>CantierePro - Gestione Giornate, Cantieri e Scadenze</title>
     <style>
         :root {
             --primary: #ea580c;
@@ -114,7 +114,7 @@
         }
 
         .container {
-            max-width: 1140px;
+            max-width: 1160px;
             margin: 20px auto;
             padding: 0 15px;
         }
@@ -179,14 +179,17 @@
 
         .quick-grid {
             display: grid;
-            grid-template-columns: 2fr 2fr 1fr 1.5fr;
+            grid-template-columns: 2fr 2fr 1.1fr 1.1fr 1.5fr;
             gap: 10px;
             align-items: end;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 850px) {
             .quick-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
+            }
+            .quick-grid > div:last-child {
+                grid-column: span 2;
             }
         }
 
@@ -312,6 +315,7 @@
         .badge-ok { background: #dcfce7; color: var(--success); }
         .badge-warn { background: #fef3c7; color: var(--warning); }
         .badge-danger { background: #fee2e2; color: var(--danger); }
+        .badge-info { background: #e0f2fe; color: #0369a1; }
 
         @keyframes pulseUrgent {
             0% { opacity: 1; }
@@ -321,18 +325,6 @@
 
         .badge-pulse {
             animation: pulseUrgent 1.8s infinite;
-        }
-
-        /* Selettore Avanzamento Lavori in tabella */
-        .avanzamento-select {
-            padding: 6px 8px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            border-radius: 6px;
-            border: 1px solid #cbd5e1;
-            width: 95px;
-            background: #f8fafc;
-            cursor: pointer;
         }
 
         /* KPI Dashboard */
@@ -374,6 +366,7 @@
             margin-bottom: 8px;
             background: #f8fafc;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .squadra-info strong {
@@ -386,10 +379,57 @@
             font-size: 0.8rem;
         }
 
-        .squadra-input {
-            width: 95px;
+        .squadra-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .squadra-field {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .squadra-field span {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--muted);
+            margin-bottom: 2px;
+        }
+
+        .squadra-input-gg, .squadra-input-extra {
+            width: 75px;
+            padding: 7px 5px;
             text-align: center;
             font-weight: 700;
+        }
+
+        .squadra-input-extra {
+            border-color: #fdba74;
+            background: #fff7ed;
+        }
+
+        /* Tasti rapidi ore in più */
+        .extra-pills {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .pill-btn {
+            background: #ffedd5;
+            color: #c2410c;
+            border: 1px solid #fdba74;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .pill-btn:hover {
+            background: #fed7aa;
         }
 
         .month-picker-wrap {
@@ -446,7 +486,7 @@
 
 <nav>
     <button class="active" onclick="cambiaTab('dashboard', this)">📊 Riepilogo</button>
-    <button onclick="cambiaTab('ore', this)">⏱️ Segna Ore</button>
+    <button onclick="cambiaTab('ore', this)">📅 Segna Giornate & Extra</button>
     <button onclick="cambiaTab('cantieri', this)">🏢 Cantieri & Previsioni</button>
     <button onclick="cambiaTab('operai', this)">👷 Operai, Paghe & Scadenze</button>
 </nav>
@@ -458,7 +498,7 @@
 
         <!-- WIDGET REGISTRAZIONE RAPIDA 1-CLICK -->
         <div class="quick-box">
-            <h2>⚡ Registrazione Rapida Ore (Oggi)</h2>
+            <h2>⚡ Segna Giornata Rapida (Oggi)</h2>
             <form onsubmit="registraRapido(event)" class="quick-grid">
                 <div>
                     <label>Cantiere</label>
@@ -469,11 +509,19 @@
                     <select id="quick-operaio" required></select>
                 </div>
                 <div>
-                    <label>Ore</label>
-                    <input type="number" id="quick-ore" step="0.5" min="0.5" max="24" value="8" required>
+                    <label>Giornata</label>
+                    <select id="quick-giorni">
+                        <option value="1" selected>1 Giornata (8h)</option>
+                        <option value="0.5">½ Giornata (4h)</option>
+                        <option value="0">0 (Solo Extra)</option>
+                    </select>
                 </div>
                 <div>
-                    <button type="submit" class="btn-quick">✓ Registra per Oggi</button>
+                    <label>+ Ore in più</label>
+                    <input type="number" id="quick-extra" step="0.5" min="0" max="16" value="0">
+                </div>
+                <div>
+                    <button type="submit" class="btn-quick">✓ Registra Oggi</button>
                 </div>
             </form>
         </div>
@@ -498,14 +546,14 @@
         </div>
 
         <div class="card">
-            <h2>🔮 Previsione Finale Cantieri: Guadagnerà o Perderà?</h2>
+            <h2>🔮 Previsione Fine Cantiere: Guadagnerà o Perderà?</h2>
             <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
                             <th>Cantiere</th>
                             <th>Preventivo</th>
-                            <th>Lavori Fatti</th>
+                            <th>Tempo Richiesto / Fatto</th>
                             <th>Costo Finale Stimato</th>
                             <th>Previsione a Fine Lavoro</th>
                         </tr>
@@ -533,12 +581,12 @@
         </div>
     </div>
 
-    <!-- TAB 2: SEGNA ORE -->
+    <!-- TAB 2: SEGNA GIORNATE & ORE IN PIÙ -->
     <div id="ore" class="section">
         <div class="grid-2">
             <!-- INSERIMENTO SQUADRA IN BLOCCO -->
             <div class="card">
-                <h2>👷‍♂️ Segna Presenze Squadra (In Blocco)</h2>
+                <h2>👷‍♂️ Segna Squadra (Giornate + Ore in più)</h2>
                 <form onsubmit="salvaPresenzeSquadra(event)">
                     <div class="grid-2" style="gap:10px;">
                         <div class="form-group">
@@ -550,16 +598,16 @@
                             <select id="squadra-cantiere" required></select>
                         </div>
                     </div>
-                    <span class="help-text" style="margin-bottom: 12px;">Metti <strong>0</strong> per chi era assente o in un altro cantiere.</span>
+                    <span class="help-text" style="margin-bottom: 12px;"><strong>1</strong> = Giornata intera (8h) • <strong>0.5</strong> = Mezza (4h) • <strong>0</strong> = Assente.</span>
                     <div id="squadra-lista-operai"></div>
-                    <button type="submit" class="btn-primary" style="margin-top: 10px;">✓ Salva Presenze del Giorno</button>
+                    <button type="submit" class="btn-primary" style="margin-top: 10px;">✓ Salva Giornate della Squadra</button>
                 </form>
             </div>
 
-            <!-- INSERIMENTO SINGOLO CON NOTE -->
+            <!-- INSERIMENTO SINGOLO CON TASTI RAPIDI ORE IN PIÙ -->
             <div class="card">
-                <h2>⏱️ Registrazione Singola (con Note)</h2>
-                <form onsubmit="aggiungiOre(event)">
+                <h2>⏱️ Segna Operaio Singolo + Ore Extra</h2>
+                <form onsubmit="aggiungiPresenzaSingola(event)">
                     <div class="form-group">
                         <label>Data</label>
                         <input type="date" id="ore-data" required>
@@ -572,22 +620,37 @@
                         <label>Operaio</label>
                         <select id="ore-operaio" required></select>
                     </div>
-                    <div class="form-group">
-                        <label>Ore Lavorate</label>
-                        <input type="number" step="0.5" min="0.5" max="24" id="ore-quantita" value="8" required>
-                        <span class="help-text">Usa i decimali per le mezz'ore (es. 8.5 = 8 ore e mezza).</span>
+                    <div class="grid-2" style="gap:10px;">
+                        <div class="form-group">
+                            <label>Giornate Lavorate</label>
+                            <select id="ore-giorni">
+                                <option value="1" selected>1 Giornata (8h)</option>
+                                <option value="0.5">0.5 Mezza Giornata (4h)</option>
+                                <option value="0">0 Giornate (Solo Extra)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>+ Ore in più (Extra)</label>
+                            <input type="number" step="0.5" min="0" max="16" id="ore-extra" value="0">
+                            <div class="extra-pills">
+                                <button type="button" class="pill-btn" onclick="aggiungiPillExtra(1)">+1h</button>
+                                <button type="button" class="pill-btn" onclick="aggiungiPillExtra(2)">+2h</button>
+                                <button type="button" class="pill-btn" onclick="aggiungiPillExtra(3)">+3h</button>
+                                <button type="button" class="pill-btn" onclick="document.getElementById('ore-extra').value=0">Reset</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Note lavoro svolto (opzionale)</label>
                         <input type="text" id="ore-note" placeholder="Es. Gettata pilastri, tramezzi...">
                     </div>
-                    <button type="submit" class="btn-primary">+ Registra Ore Singole</button>
+                    <button type="submit" class="btn-primary">+ Registra Giornata</button>
                 </form>
             </div>
         </div>
 
         <div class="card">
-            <h2>📋 Storico Registrazioni Ore</h2>
+            <h2>📋 Storico Giornate e Ore Extra</h2>
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -595,7 +658,8 @@
                             <th>Data</th>
                             <th>Operaio</th>
                             <th>Cantiere</th>
-                            <th>Ore</th>
+                            <th>Giornate + Extra</th>
+                            <th>Ore Tot.</th>
                             <th>Importo</th>
                             <th></th>
                         </tr>
@@ -610,7 +674,7 @@
     <div id="cantieri" class="section">
         <div class="grid-2">
             <div class="card">
-                <h2>🏢 Nuovo Cantiere</h2>
+                <h2>🏢 Nuovo Cantiere (con Tempo Richiesto)</h2>
                 <form onsubmit="aggiungiCantiere(event)">
                     <div class="form-group">
                         <label>Nome Cantiere / Cliente</label>
@@ -619,32 +683,18 @@
                     <div class="form-group">
                         <label>Preventivo / Ricavo Pattuito (€)</label>
                         <input type="number" step="0.01" id="cant-ricavo" placeholder="25000" required>
-                        <span class="help-text">Quanto pagherà il cliente a lavoro finito.</span>
                     </div>
                     <div class="grid-2" style="gap:10px;">
+                        <div class="form-group">
+                            <label>Tempo Richiesto (Giorni di lavoro)</label>
+                            <input type="number" step="1" min="1" id="cant-giorni-stimati" placeholder="30" oninput="aggiornaAnteprimaOreCantiere()" required>
+                            <span class="help-text" id="anteprima-ore-richieste">Pari a 0 ore totali di manodopera.</span>
+                        </div>
                         <div class="form-group">
                             <label>Materiali Iniziali (€)</label>
                             <input type="number" step="0.01" id="cant-materiali" value="0" required>
                         </div>
-                        <div class="form-group">
-                            <label>% Lavori Già Fatti</label>
-                            <select id="cant-avanzamento">
-                                <option value="10">10% (Appena iniziato)</option>
-                                <option value="20">20%</option>
-                                <option value="25" selected>25% (Un quarto)</option>
-                                <option value="30">30%</option>
-                                <option value="40">40%</option>
-                                <option value="50">50% (A metà)</option>
-                                <option value="60">60%</option>
-                                <option value="70">70%</option>
-                                <option value="75">75% (Tre quarti)</option>
-                                <option value="80">80%</option>
-                                <option value="90">90% (Quasi finito)</option>
-                                <option value="100">100% (Finito)</option>
-                            </select>
-                        </div>
                     </div>
-                    <span class="help-text" style="margin-top:-8px; margin-bottom:10px;">Indica a che punto sei con i lavori: il sito calcolerà se alla fine guadagnerai o perderai.</span>
                     <button type="submit" class="btn-primary">+ Crea Cantiere</button>
                 </form>
             </div>
@@ -667,16 +717,17 @@
         </div>
 
         <div class="card">
-            <h2>🔮 Calcolo Previsione Fine Cantiere (Guadagnerà o Perderà?)</h2>
-            <p class="help-text" style="margin-bottom: 14px;">Aggiorna la <strong>% Lavori Fatti</strong> man mano che procedi: il sistema stima i costi finali al 100% e ti avvisa se il cantiere andrà in utile o in perdita.</p>
+            <h2>🔮 Calcolo Previsione Fine Cantiere (Tempo Richiesto vs Costi)</h2>
+            <p class="help-text" style="margin-bottom: 14px;">In base ai <strong>giorni richiesti per finire</strong> e alle giornate già lavorate, il sistema calcola quanti giorni/ore mancano e se alla fine <strong>guadagnerai o perderai</strong>.</p>
             <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
                             <th>Cantiere</th>
                             <th>Preventivo</th>
-                            <th>Spese Ad Oggi (Ore+Mat)</th>
-                            <th>% Lavori Fatti</th>
+                            <th>Tempo Richiesto</th>
+                            <th>Fatto / Mancante</th>
+                            <th>Spese Ad Oggi</th>
                             <th>Costo Finale Stimato</th>
                             <th>Previsione Finale</th>
                             <th></th>
@@ -693,7 +744,7 @@
         <!-- TABELLA PAGHE E GIORNI LAVORATI AL MESE -->
         <div class="card" style="border-top: 4px solid var(--primary);">
             <h2>
-                <span>💶 Riepilogo Fine Mese: Giorni Lavorati e Quanto Dare a Ogni Operaio</span>
+                <span>💶 Paga Fine Mese: Giorni Lavorati, Ore Extra e Totale da Dare</span>
                 <div class="month-picker-wrap">
                     <label for="filtro-mese" style="margin:0;">Mese:</label>
                     <input type="month" id="filtro-mese" onchange="aggiornaUI()">
@@ -704,10 +755,10 @@
                     <thead>
                         <tr>
                             <th>Operaio</th>
-                            <th>Qualifica</th>
-                            <th>Paga / Costo Orario</th>
+                            <th>Paga Giornaliera</th>
                             <th>Giorni Lavorati</th>
-                            <th>Ore nel Mese</th>
+                            <th>+ Ore Extra</th>
+                            <th>Ore Totali</th>
                             <th>Totale da Dare a Fine Mese</th>
                         </tr>
                     </thead>
@@ -718,7 +769,7 @@
 
         <div class="grid-2">
             <div class="card">
-                <h2>👷 Aggiungi Operaio</h2>
+                <h2>👷 Aggiungi Operaio (Paga Giornaliera)</h2>
                 <form onsubmit="aggiungiOperaio(event)">
                     <div class="form-group">
                         <label>Nome e Cognome</label>
@@ -729,9 +780,9 @@
                         <input type="text" id="op-ruolo" placeholder="Es. Muratore / Capocantiere" required>
                     </div>
                     <div class="form-group">
-                        <label>Paga / Costo Orario (€/ora)</label>
-                        <input type="number" step="0.5" id="op-costo" placeholder="15.00" required>
-                        <span class="help-text">Inserisci quanto gli dai all'ora (o il costo orario aziendale).</span>
+                        <label>Paga Giornaliera (€ al giorno - 8 ore)</label>
+                        <input type="number" step="1" id="op-paga-giorno" placeholder="120" required>
+                        <span class="help-text">Le eventuali ore in più vengono calcolate automaticamente (Paga Giornaliera ÷ 8).</span>
                     </div>
                     <button type="submit" class="btn-primary">+ Salva Operaio</button>
                 </form>
@@ -766,15 +817,16 @@
         </div>
 
         <div class="card">
-            <h2>👷 Gestione Anagrafica Operai</h2>
+            <h2>👷 Elenco Operai</h2>
             <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
                             <th>Nome</th>
                             <th>Qualifica</th>
-                            <th>Paga / Costo Orario</th>
-                            <th>Ore Storiche Totali</th>
+                            <th>Paga Giornaliera</th>
+                            <th>Valore 1 Ora Extra</th>
+                            <th>Giorni Storici</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -807,10 +859,12 @@
 <div id="toast">Operazione completata!</div>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('cantiereProDB')) || {
+    const ORE_PER_GIORNO = 8;
+
+    let db = JSON.parse(localStorage.getItem('cantiereProDB_v2')) || {
         operai: [],
         cantieri: [],
-        ore: [],
+        presenze: [],
         documenti: []
     };
 
@@ -830,7 +884,7 @@
     }
 
     function salvaDB() {
-        localStorage.setItem('cantiereProDB', JSON.stringify(db));
+        localStorage.setItem('cantiereProDB_v2', JSON.stringify(db));
         aggiornaUI();
     }
 
@@ -849,6 +903,21 @@
         if (!dataStr) return '';
         const [y, m, d] = dataStr.split('-');
         return `${d}/${m}/${y}`;
+    }
+
+    function aggiungiPillExtra(ore) {
+        const inp = document.getElementById('ore-extra');
+        inp.value = (parseFloat(inp.value) || 0) + ore;
+    }
+
+    function aggiornaAnteprimaOreCantiere() {
+        const gg = parseFloat(document.getElementById('cant-giorni-stimati').value) || 0;
+        document.getElementById('anteprima-ore-richieste').innerText = `Pari a ${gg * ORE_PER_GIORNO} ore totali di manodopera.`;
+    }
+
+    function calcolaCostoPresenza(pagaGiornaliera, giorni, oreExtra) {
+        const pagaOraria = pagaGiornaliera / ORE_PER_GIORNO;
+        return (giorni * pagaGiornaliera) + (oreExtra * pagaOraria);
     }
 
     // --- CARICA DATI ESEMPIO ---
@@ -873,24 +942,23 @@
 
         db = {
             operai: [
-                { id: 101, nome: "Marco Bianchi", ruolo: "Capocantiere", costoOrario: 20.00 },
-                { id: 102, nome: "Giuseppe Neri", ruolo: "Muratore Specializzato", costoOrario: 16.00 },
-                { id: 103, nome: "Luca Rossi", ruolo: "Manovale", costoOrario: 13.00 }
+                { id: 101, nome: "Marco Bianchi", ruolo: "Capocantiere", pagaGiornaliera: 160.00 },
+                { id: 102, nome: "Giuseppe Neri", ruolo: "Muratore Specializzato", pagaGiornaliera: 128.00 },
+                { id: 103, nome: "Luca Rossi", ruolo: "Manovale", pagaGiornaliera: 104.00 }
             ],
             cantieri: [
-                { id: 201, nome: "Ristrutturazione Villa Rossi", ricavo: 30000.00, materiali: 5200.00, avanzamento: 50 },
-                { id: 202, nome: "Rifacimento Tetto Condominio Sole", ricavo: 14000.00, materiali: 6800.00, avanzamento: 40 }
+                { id: 201, nome: "Ristrutturazione Villa Rossi", ricavo: 18000.00, materiali: 3500.00, giorniStimati: 40 },
+                { id: 202, nome: "Rifacimento Tetto Condominio Sole", ricavo: 9500.00, materiali: 4200.00, giorniStimati: 45 }
             ],
-            ore: [
-                { id: 301, data: g1, cantiereId: 201, operaioId: 101, ore: 8, costoTotale: 160.00, note: "Direzione lavori" },
-                { id: 302, data: g2, cantiereId: 201, operaioId: 101, ore: 8, costoTotale: 160.00, note: "Tracciamento" },
-                { id: 303, data: g3, cantiereId: 201, operaioId: 101, ore: 8, costoTotale: 160.00, note: "Controllo gettata" },
-                { id: 304, data: g1, cantiereId: 201, operaioId: 102, ore: 8, costoTotale: 128.00, note: "Posa tramezzi" },
-                { id: 305, data: g2, cantiereId: 201, operaioId: 102, ore: 8.5, costoTotale: 136.00, note: "Intonaci" },
-                { id: 306, data: g3, cantiereId: 202, operaioId: 102, ore: 8, costoTotale: 128.00, note: "Smontaggio tegole" },
-                { id: 307, data: g4, cantiereId: 202, operaioId: 102, ore: 8, costoTotale: 128.00, note: "Guaina tetto" },
-                { id: 308, data: g3, cantiereId: 202, operaioId: 103, ore: 8, costoTotale: 104.00, note: "Movimentazione" },
-                { id: 309, data: g4, cantiereId: 202, operaioId: 103, ore: 8, costoTotale: 104.00, note: "Pulizia cantiere" }
+            presenze: [
+                { id: 301, data: g1, cantiereId: 201, operaioId: 101, giorni: 1, oreExtra: 2, costoTotale: 200.00, note: "Direzione + tracciamento" },
+                { id: 302, data: g2, cantiereId: 201, operaioId: 101, giorni: 1, oreExtra: 0, costoTotale: 160.00, note: "Controllo gettata" },
+                { id: 303, data: g1, cantiereId: 201, operaioId: 102, giorni: 1, oreExtra: 1, costoTotale: 144.00, note: "Posa tramezzi" },
+                { id: 304, data: g2, cantiereId: 201, operaioId: 102, giorni: 1, oreExtra: 0, costoTotale: 128.00, note: "Intonaci" },
+                { id: 305, data: g3, cantiereId: 202, operaioId: 102, giorni: 1, oreExtra: 2, costoTotale: 160.00, note: "Smontaggio tegole" },
+                { id: 306, data: g4, cantiereId: 202, operaioId: 102, giorni: 1, oreExtra: 0, costoTotale: 128.00, note: "Guaina tetto" },
+                { id: 307, data: g3, cantiereId: 202, operaioId: 103, giorni: 1, oreExtra: 2, costoTotale: 130.00, note: "Movimentazione" },
+                { id: 308, data: g4, cantiereId: 202, operaioId: 103, giorni: 0.5, oreExtra: 0, costoTotale: 52.00, note: "Mezza giornata pulizia" }
             ],
             documenti: [
                 { id: 401, operaioId: 101, tipo: "Visita Medica / Idoneità", scadenza: dataUrgente7gg.toISOString().slice(0, 10) },
@@ -908,25 +976,33 @@
         e.preventDefault();
         const cantId = Number(document.getElementById('quick-cantiere').value);
         const opId = Number(document.getElementById('quick-operaio').value);
-        const oreLavorate = parseFloat(document.getElementById('quick-ore').value);
+        const giorni = parseFloat(document.getElementById('quick-giorni').value) || 0;
+        const oreExtra = parseFloat(document.getElementById('quick-extra').value) || 0;
         const operaio = db.operai.find(o => o.id === opId);
 
         if (!cantId || !operaio) {
             return alert('Crea prima almeno un cantiere e un operaio!');
         }
+        if (giorni === 0 && oreExtra === 0) {
+            return alert('Seleziona almeno mezza giornata o 1 ora extra.');
+        }
 
-        db.ore.unshift({
+        const costo = calcolaCostoPresenza(operaio.pagaGiornaliera, giorni, oreExtra);
+
+        db.presenze.unshift({
             id: Date.now(),
             data: new Date().toISOString().slice(0, 10),
             cantiereId: cantId,
             operaioId: opId,
-            ore: oreLavorate,
-            costoTotale: oreLavorate * operaio.costoOrario,
+            giorni: giorni,
+            oreExtra: oreExtra,
+            costoTotale: costo,
             note: 'Registrazione rapida'
         });
 
+        document.getElementById('quick-extra').value = 0;
         salvaDB();
-        mostraToast(`✓ Registrate ${oreLavorate}h per ${operaio.nome}`);
+        mostraToast(`✓ Registrato: ${giorni} gg + ${oreExtra}h extra per ${operaio.nome}`);
     }
 
     // --- PRESENZE SQUADRA IN BLOCCO ---
@@ -937,22 +1013,27 @@
 
         if (!cantId) return alert('Seleziona un cantiere valido.');
 
-        const inputs = document.querySelectorAll('.squadra-input');
+        const rows = document.querySelectorAll('.squadra-row');
         let registrati = 0;
 
-        inputs.forEach(inp => {
-            const ore = parseFloat(inp.value) || 0;
-            if (ore > 0) {
-                const opId = Number(inp.dataset.opid);
+        rows.forEach(row => {
+            const inpGg = row.querySelector('.squadra-input-gg');
+            const inpExtra = row.querySelector('.squadra-input-extra');
+            const giorni = parseFloat(inpGg.value) || 0;
+            const oreExtra = parseFloat(inpExtra.value) || 0;
+
+            if (giorni > 0 || oreExtra > 0) {
+                const opId = Number(inpGg.dataset.opid);
                 const operaio = db.operai.find(o => o.id === opId);
                 if (operaio) {
-                    db.ore.unshift({
+                    db.presenze.unshift({
                         id: Date.now() + opId,
                         data: data,
                         cantiereId: cantId,
                         operaioId: opId,
-                        ore: ore,
-                        costoTotale: ore * operaio.costoOrario,
+                        giorni: giorni,
+                        oreExtra: oreExtra,
+                        costoTotale: calcolaCostoPresenza(operaio.pagaGiornaliera, giorni, oreExtra),
                         note: 'Presenza squadra'
                     });
                     registrati++;
@@ -960,9 +1041,43 @@
             }
         });
 
-        if (registrati === 0) return alert('Inserisci almeno 1 ora per almeno un operaio.');
+        if (registrati === 0) return alert('Inserisci almeno una giornata o ora extra per un operaio.');
         salvaDB();
-        mostraToast(`✓ Registrate presenze per ${registrati} operai!`);
+        mostraToast(`✓ Registrate giornate per ${registrati} operai!`);
+    }
+
+    // --- PRESENZA SINGOLA ---
+    function aggiungiPresenzaSingola(e) {
+        e.preventDefault();
+        const opId = Number(document.getElementById('ore-operaio').value);
+        const cantId = Number(document.getElementById('ore-cantiere').value);
+        const operaio = db.operai.find(o => o.id === opId);
+        const giorni = parseFloat(document.getElementById('ore-giorni').value) || 0;
+        const oreExtra = parseFloat(document.getElementById('ore-extra').value) || 0;
+
+        if (!operaio) return alert('Seleziona un operaio valido.');
+        if (giorni === 0 && oreExtra === 0) return alert('Inserisci almeno mezza giornata o 1 ora extra.');
+
+        db.presenze.unshift({
+            id: Date.now(),
+            data: document.getElementById('ore-data').value,
+            cantiereId: cantId,
+            operaioId: opId,
+            giorni: giorni,
+            oreExtra: oreExtra,
+            costoTotale: calcolaCostoPresenza(operaio.pagaGiornaliera, giorni, oreExtra),
+            note: document.getElementById('ore-note').value.trim()
+        });
+
+        document.getElementById('ore-extra').value = 0;
+        document.getElementById('ore-note').value = '';
+        salvaDB();
+        mostraToast('📅 Giornata registrata!');
+    }
+
+    function eliminaPresenza(id) {
+        db.presenze = db.presenze.filter(p => p.id !== id);
+        salvaDB();
     }
 
     // --- OPERAI ---
@@ -972,7 +1087,7 @@
             id: Date.now(),
             nome: document.getElementById('op-nome').value.trim(),
             ruolo: document.getElementById('op-ruolo').value.trim(),
-            costoOrario: parseFloat(document.getElementById('op-costo').value)
+            pagaGiornaliera: parseFloat(document.getElementById('op-paga-giorno').value)
         });
         e.target.reset();
         salvaDB();
@@ -992,23 +1107,14 @@
             id: Date.now(),
             nome: document.getElementById('cant-nome').value.trim(),
             ricavo: parseFloat(document.getElementById('cant-ricavo').value),
-            materiali: parseFloat(document.getElementById('cant-materiali').value) || 0,
-            avanzamento: parseInt(document.getElementById('cant-avanzamento').value) || 25
+            giorniStimati: parseFloat(document.getElementById('cant-giorni-stimati').value) || 10,
+            materiali: parseFloat(document.getElementById('cant-materiali').value) || 0
         });
         e.target.reset();
         document.getElementById('cant-materiali').value = 0;
-        document.getElementById('cant-avanzamento').value = 25;
+        aggiornaAnteprimaOreCantiere();
         salvaDB();
         mostraToast('🏢 Cantiere creato!');
-    }
-
-    function aggiornaAvanzamento(cantId, nuovaPerc) {
-        const cantiere = db.cantieri.find(c => c.id === cantId);
-        if (cantiere) {
-            cantiere.avanzamento = parseInt(nuovaPerc);
-            salvaDB();
-            mostraToast(`📊 Avanzamento aggiornato al ${nuovaPerc}%`);
-        }
     }
 
     function aggiungiSpesaMateriale(e) {
@@ -1027,36 +1133,6 @@
     function eliminaCantiere(id) {
         if (!confirm('Eliminare questo cantiere?')) return;
         db.cantieri = db.cantieri.filter(c => c.id !== id);
-        salvaDB();
-    }
-
-    // --- ORE SINGOLE ---
-    function aggiungiOre(e) {
-        e.preventDefault();
-        const opId = Number(document.getElementById('ore-operaio').value);
-        const cantId = Number(document.getElementById('ore-cantiere').value);
-        const operaio = db.operai.find(o => o.id === opId);
-        const oreLavorate = parseFloat(document.getElementById('ore-quantita').value);
-
-        if (!operaio) return alert('Seleziona un operaio valido.');
-
-        db.ore.unshift({
-            id: Date.now(),
-            data: document.getElementById('ore-data').value,
-            cantiereId: cantId,
-            operaioId: opId,
-            ore: oreLavorate,
-            costoTotale: oreLavorate * operaio.costoOrario,
-            note: document.getElementById('ore-note').value.trim()
-        });
-
-        document.getElementById('ore-note').value = '';
-        salvaDB();
-        mostraToast('⏱️ Ore registrate!');
-    }
-
-    function eliminaOre(id) {
-        db.ore = db.ore.filter(o => o.id !== id);
         salvaDB();
     }
 
@@ -1096,11 +1172,6 @@
         }
     }
 
-    function opzioniAvanzamentoHTML(valoreAttuale) {
-        const steps = [10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100];
-        return steps.map(s => `<option value="${s}" ${s === valoreAttuale ? 'selected' : ''}>${s}%</option>`).join('');
-    }
-
     // --- AGGIORNAMENTO INTERFACCIA ---
     function aggiornaUI() {
         const optCantieri = db.cantieri.length 
@@ -1113,7 +1184,7 @@
         });
 
         const optOperai = db.operai.length
-            ? db.operai.map(o => `<option value="${o.id}">${o.nome} (${formatEuro(o.costoOrario)}/h)</option>`).join('')
+            ? db.operai.map(o => `<option value="${o.id}">${o.nome} (${formatEuro(o.pagaGiornaliera)}/gg)</option>`).join('')
             : '<option value="">-- Aggiungi prima un operaio --</option>';
 
         ['ore-operaio', 'doc-operaio', 'quick-operaio'].forEach(id => {
@@ -1127,9 +1198,18 @@
                 <div class="squadra-row">
                     <div class="squadra-info">
                         <strong>${o.nome}</strong>
-                        <small>${o.ruolo} • ${formatEuro(o.costoOrario)}/ora</small>
+                        <small>${o.ruolo} • ${formatEuro(o.pagaGiornaliera)}/gg</small>
                     </div>
-                    <input type="number" class="squadra-input" data-opid="${o.id}" step="0.5" min="0" max="24" value="8">
+                    <div class="squadra-controls">
+                        <div class="squadra-field">
+                            <span>GIORNATE</span>
+                            <input type="number" class="squadra-input-gg" data-opid="${o.id}" step="0.5" min="0" max="1" value="1">
+                        </div>
+                        <div class="squadra-field">
+                            <span>+ ORE EXTRA</span>
+                            <input type="number" class="squadra-input-extra" step="0.5" min="0" max="16" value="0">
+                        </div>
+                    </div>
                 </div>
             `).join('')
             : '<p class="empty-msg">Aggiungi prima gli operai nella scheda "Operai, Paghe & Scadenze".</p>';
@@ -1139,38 +1219,39 @@
         let totalePagheMeseCorrente = 0;
 
         document.getElementById('lista-paghe-mese').innerHTML = db.operai.length ? db.operai.map(o => {
-            const oreMeseRecords = db.ore.filter(x => x.operaioId === o.id && x.data && x.data.startsWith(meseSelezionato));
-            // Conta i giorni unici in cui l'operaio ha lavorato in quel mese
-            const giorniUnici = new Set(oreMeseRecords.map(x => x.data)).size;
-            const oreMese = oreMeseRecords.reduce((acc, x) => acc + x.ore, 0);
-            const soldiDaDare = oreMeseRecords.reduce((acc, x) => acc + x.costoTotale, 0);
+            const presMese = db.presenze.filter(x => x.operaioId === o.id && x.data && x.data.startsWith(meseSelezionato));
+            const totGiorni = presMese.reduce((acc, x) => acc + x.giorni, 0);
+            const totExtra = presMese.reduce((acc, x) => acc + x.oreExtra, 0);
+            const oreTotali = (totGiorni * ORE_PER_GIORNO) + totExtra;
+            const soldiDaDare = presMese.reduce((acc, x) => acc + x.costoTotale, 0);
 
             return `<tr>
-                <td><strong>${o.nome}</strong></td>
-                <td>${o.ruolo}</td>
-                <td>${formatEuro(o.costoOrario)}/h</td>
-                <td><strong>${giorniUnici} giorni</strong></td>
-                <td>${oreMese} h</td>
-                <td><span class="badge badge-ok" style="font-size:0.9rem;">${formatEuro(soldiDaDare)}</span></td>
+                <td><strong>${o.nome}</strong><br><small style="color:#64748b">${o.ruolo}</small></td>
+                <td>${formatEuro(o.pagaGiornaliera)}/gg</td>
+                <td><strong>${totGiorni} gg</strong></td>
+                <td>${totExtra > 0 ? `<span class="badge badge-warn">+${totExtra} h</span>` : '0 h'}</td>
+                <td>${oreTotali} h</td>
+                <td><span class="badge badge-ok" style="font-size:0.92rem;">${formatEuro(soldiDaDare)}</span></td>
             </tr>`;
         }).join('') : '<tr><td colspan="6" class="empty-msg">Nessun operaio inserito.</td></tr>';
 
-        // Calcola totale paghe del mese attuale per KPI Dashboard
-        db.ore.filter(x => x.data && x.data.startsWith(meseCorrenteISO)).forEach(x => {
+        db.presenze.filter(x => x.data && x.data.startsWith(meseCorrenteISO)).forEach(x => {
             totalePagheMeseCorrente += x.costoTotale;
         });
 
         // Tabella Anagrafica Operai
         document.getElementById('lista-operai').innerHTML = db.operai.length ? db.operai.map(o => {
-            const oreOp = db.ore.filter(x => x.operaioId === o.id).reduce((acc, x) => acc + x.ore, 0);
+            const ggStorici = db.presenze.filter(x => x.operaioId === o.id).reduce((acc, x) => acc + x.giorni, 0);
+            const valOra = o.pagaGiornaliera / ORE_PER_GIORNO;
             return `<tr>
                 <td><strong>${o.nome}</strong></td>
                 <td>${o.ruolo}</td>
-                <td>${formatEuro(o.costoOrario)}/h</td>
-                <td>${oreOp} h</td>
+                <td><strong>${formatEuro(o.pagaGiornaliera)}/gg</strong></td>
+                <td>${formatEuro(valOra)}/h</td>
+                <td>${ggStorici} gg</td>
                 <td><button class="btn-danger" onclick="eliminaOperaio(${o.id})">Elimina</button></td>
             </tr>`;
-        }).join('') : '<tr><td colspan="5" class="empty-msg">Nessun operaio inserito.</td></tr>';
+        }).join('') : '<tr><td colspan="6" class="empty-msg">Nessun operaio inserito.</td></tr>';
 
         // Tabella Documenti & Allerte
         let countAllerte = 0;
@@ -1203,17 +1284,33 @@
 
         document.getElementById('dash-scadenze-list').innerHTML = htmlAllerte || '<tr><td colspan="4" class="empty-msg">✅ Tutti i documenti sono in regola!</td></tr>';
 
-        // --- TABELLA CANTIERI & PREVISIONE FUTURA (GUADAGNERÀ O PERDERÀ) ---
+        // --- TABELLA CANTIERI & PREVISIONE SU TEMPO RICHIESTO ---
         let previsioneUtileComplessivo = 0;
         let htmlDashCantieri = '';
 
-        document.getElementById('lista-cantieri').innerHTML = db.cantieri.length ? db.cantieri.map(c => {
-            const costoOre = db.ore.filter(x => x.cantiereId === c.id).reduce((acc, x) => acc + x.costoTotale, 0);
-            const speseAdOggi = costoOre + c.materiali;
-            const perc = c.avanzamento || 25;
+        // Calcola costo medio giornaliero aziendale (se non ci sono ancora ore sul cantiere)
+        const mediaPagaAziendale = db.operai.length 
+            ? db.operai.reduce((acc, o) => acc + o.pagaGiornaliera, 0) / db.operai.length 
+            : 130;
 
-            // Proiezione al 100% dei lavori
-            const costoFinaleStimato = speseAdOggi / (perc / 100);
+        document.getElementById('lista-cantieri').innerHTML = db.cantieri.length ? db.cantieri.map(c => {
+            const presCant = db.presenze.filter(x => x.cantiereId === c.id);
+            const costoManodoperaAdOggi = presCant.reduce((acc, x) => acc + x.costoTotale, 0);
+            const oreFatte = presCant.reduce((acc, x) => acc + (x.giorni * ORE_PER_GIORNO) + x.oreExtra, 0);
+            const giorniFattiEquiv = oreFatte / ORE_PER_GIORNO;
+
+            const giorniRichiesti = c.giorniStimati || 20;
+            const oreRichieste = giorniRichiesti * ORE_PER_GIORNO;
+
+            const giorniMancanti = Math.max(0, giorniRichiesti - giorniFattiEquiv);
+            const oreMancanti = Math.max(0, oreRichieste - oreFatte);
+
+            // Calcolo costo medio orario effettivo su questo cantiere (o media aziendale se a 0)
+            const costoOrarioMedio = oreFatte > 0 ? (costoManodoperaAdOggi / oreFatte) : (mediaPagaAziendale / ORE_PER_GIORNO);
+            const costoManodoperaMancante = oreMancanti * costoOrarioMedio;
+
+            const speseAdOggi = costoManodoperaAdOggi + c.materiali;
+            const costoFinaleStimato = speseAdOggi + costoManodoperaMancante;
             const margineFinalePrevisto = c.ricavo - costoFinaleStimato;
             previsioneUtileComplessivo += margineFinalePrevisto;
 
@@ -1227,7 +1324,7 @@
             htmlDashCantieri += `<tr class="${rowClass}">
                 <td><strong>${c.nome}</strong></td>
                 <td>${formatEuro(c.ricavo)}</td>
-                <td><strong>${perc}%</strong></td>
+                <td><strong>${giorniRichiesti} gg</strong> (${oreRichieste}h)<br><small style="color:#64748b">Mancano: ${giorniMancanti.toFixed(1)} gg (${Math.round(oreMancanti)}h)</small></td>
                 <td>${formatEuro(costoFinaleStimato)}</td>
                 <td>${badgePrevisione}</td>
             </tr>`;
@@ -1235,33 +1332,32 @@
             return `<tr class="${rowClass}">
                 <td><strong>${c.nome}</strong></td>
                 <td>${formatEuro(c.ricavo)}</td>
-                <td>${formatEuro(speseAdOggi)}<br><small style="color:#64748b">Ore: ${formatEuro(costoOre)} | Mat: ${formatEuro(c.materiali)}</small></td>
-                <td>
-                    <select class="avanzamento-select" onchange="aggiornaAvanzamento(${c.id}, this.value)">
-                        ${opzioniAvanzamentoHTML(perc)}
-                    </select>
-                </td>
-                <td><strong>${formatEuro(costoFinaleStimato)}</strong></td>
+                <td><strong>${giorniRichiesti} gg</strong><br><small style="color:#64748b">${oreRichieste} ore tot.</small></td>
+                <td>Fatti: <strong>${giorniFattiEquiv.toFixed(1)} gg</strong> (${oreFatte}h)<br><small style="color:#ea580c">Mancano: ${giorniMancanti.toFixed(1)} gg (${Math.round(oreMancanti)}h)</small></td>
+                <td>${formatEuro(speseAdOggi)}<br><small style="color:#64748b">Op: ${formatEuro(costoManodoperaAdOggi)} | Mat: ${formatEuro(c.materiali)}</small></td>
+                <td><strong>${formatEuro(costoFinaleStimato)}</strong><br><small style="color:#64748b">+${formatEuro(costoManodoperaMancante)} stimati</small></td>
                 <td>${badgePrevisione}</td>
                 <td><button class="btn-danger" onclick="eliminaCantiere(${c.id})">Elimina</button></td>
             </tr>`;
-        }).join('') : '<tr><td colspan="7" class="empty-msg">Nessun cantiere creato.</td></tr>';
+        }).join('') : '<tr><td colspan="8" class="empty-msg">Nessun cantiere creato.</td></tr>';
 
         document.getElementById('dash-cantieri-list').innerHTML = htmlDashCantieri || '<tr><td colspan="5" class="empty-msg">Nessun cantiere attivo.</td></tr>';
 
-        // Tabella Ore
-        document.getElementById('lista-ore').innerHTML = db.ore.length ? db.ore.map(r => {
+        // Tabella Storico Presenze
+        document.getElementById('lista-ore').innerHTML = db.presenze.length ? db.presenze.map(r => {
             const op = db.operai.find(o => o.id === r.operaioId);
             const cant = db.cantieri.find(c => c.id === r.cantiereId);
+            const oreTot = (r.giorni * ORE_PER_GIORNO) + r.oreExtra;
             return `<tr>
                 <td>${formatData(r.data)}</td>
                 <td>${op ? op.nome : '-'}</td>
                 <td>${cant ? cant.nome : '-'}${r.note ? `<br><small style="color:#64748b">${r.note}</small>` : ''}</td>
-                <td><strong>${r.ore} h</strong></td>
+                <td><strong>${r.giorni} gg</strong> ${r.oreExtra > 0 ? `<span class="badge badge-warn">+${r.oreExtra}h extra</span>` : ''}</td>
+                <td>${oreTot} h</td>
                 <td>${formatEuro(r.costoTotale)}</td>
-                <td><button class="btn-danger" onclick="eliminaOre(${r.id})">X</button></td>
+                <td><button class="btn-danger" onclick="eliminaPresenza(${r.id})">X</button></td>
             </tr>`;
-        }).join('') : '<tr><td colspan="6" class="empty-msg">Nessuna ora registrata.</td></tr>';
+        }).join('') : '<tr><td colspan="7" class="empty-msg">Nessuna giornata registrata.</td></tr>';
 
         // Aggiorna KPI Dashboard
         document.getElementById('kpi-cantieri').innerText = db.cantieri.length;
@@ -1290,7 +1386,7 @@
         reader.onload = function(e) {
             try {
                 const imported = JSON.parse(e.target.result);
-                if (imported.operai && imported.cantieri && imported.ore && imported.documenti) {
+                if (imported.operai && imported.cantieri && imported.presenze && imported.documenti) {
                     db = imported;
                     salvaDB();
                     mostraToast('✅ Backup ripristinato!');
