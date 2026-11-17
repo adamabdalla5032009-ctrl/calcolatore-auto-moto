@@ -213,56 +213,6 @@
             gap: 10px;
         }
 
-        /* Quick 1-Click Box in Dashboard */
-        .quick-box {
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-            border: 1px solid #86efac;
-            border-left: 5px solid var(--success);
-            border-radius: 10px;
-            padding: 18px 20px;
-            margin-bottom: 20px;
-        }
-
-        .quick-box h2 {
-            font-size: 1.05rem;
-            color: #14532d;
-            margin-bottom: 12px;
-            border: none;
-            padding: 0;
-        }
-
-        .quick-grid {
-            display: grid;
-            grid-template-columns: 2fr 2fr 1.1fr 1.1fr 1.5fr;
-            gap: 10px;
-            align-items: end;
-        }
-
-        @media (max-width: 850px) {
-            .quick-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            .quick-grid > div:last-child {
-                grid-column: span 2;
-            }
-        }
-
-        .btn-quick {
-            background: var(--success);
-            color: white;
-            border: none;
-            padding: 11px 16px;
-            border-radius: 6px;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 0.95rem;
-            width: 100%;
-        }
-
-        .btn-quick:hover {
-            background: #15803d;
-        }
-
         /* Form e Aiuti Contestuali */
         .form-group {
             margin-bottom: 14px;
@@ -496,28 +446,6 @@
             background: #fff7ed;
         }
 
-        /* Tasti rapidi ore in più */
-        .extra-pills {
-            display: flex;
-            gap: 6px;
-            margin-top: 6px;
-        }
-
-        .pill-btn {
-            background: #ffedd5;
-            color: #c2410c;
-            border: 1px solid #fdba74;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .pill-btn:hover {
-            background: #fed7aa;
-        }
-
         .month-picker-wrap {
             display: flex;
             align-items: center;
@@ -564,14 +492,14 @@
 <div id="auth-screen">
     <div class="auth-card">
         <h2>🏗️ Cantiere<span>Pro</span></h2>
-        <p>Inserisci il tuo Nome e il tuo Codice PIN per accedere ai tuoi cantieri e dati.</p>
+        <p>Inserisci il tuo Nome e il tuo Codice PIN per accedere ai tuoi dati.</p>
         <form onsubmit="eseguiLogin(event)">
             <div class="form-group">
                 <label>Nome Utente / Impresa</label>
-                <input type="text" id="auth-nome" placeholder="Es. Mario Rossi" required>
+                <input type="text" id="auth-nome" placeholder="Es. aldo" required>
             </div>
             <div class="form-group">
-                <label>Codice PIN Segreto (es. 4 cifre)</label>
+                <label>Codice PIN Segreto</label>
                 <input type="password" id="auth-pin" placeholder="••••" maxlength="8" required>
             </div>
             <button type="submit" class="btn-primary" style="margin-top: 10px;">Accedi / Recupera Dati</button>
@@ -593,7 +521,7 @@
 
 <nav>
     <button class="active" onclick="cambiaTab('dashboard', this)">📊 Riepilogo</button>
-    <button onclick="cambiaTab('ore', this)">📅 Segna Giornate & Extra</button>
+    <button onclick="cambiaTab('ore', this)">📅 Assegna Squadra ai Cantieri</button>
     <button onclick="cambiaTab('cantieri', this)">🏢 Cantieri & Previsioni</button>
     <button onclick="cambiaTab('operai', this)">👷 Operai, Paghe & Scadenze</button>
 </nav>
@@ -602,37 +530,6 @@
 
     <!-- TAB 1: DASHBOARD -->
     <div id="dashboard" class="section active">
-
-        <!-- WIDGET REGISTRAZIONE RAPIDA 1-CLICK -->
-        <div class="quick-box">
-            <h2>⚡ Segna Giornata Rapida (Oggi)</h2>
-            <form onsubmit="registraRapido(event)" class="quick-grid">
-                <div>
-                    <label>Cantiere</label>
-                    <select id="quick-cantiere" required></select>
-                </div>
-                <div>
-                    <label>Operaio</label>
-                    <select id="quick-operaio" required></select>
-                </div>
-                <div>
-                    <label>Giornata</label>
-                    <select id="quick-giorni">
-                        <option value="1" selected>1 Giornata (8h)</option>
-                        <option value="0.5">½ Giornata (4h)</option>
-                        <option value="0">0 (Solo Extra)</option>
-                    </select>
-                </div>
-                <div>
-                    <label>+ Ore in più</label>
-                    <input type="number" id="quick-extra" step="0.5" min="0" max="16" value="0">
-                </div>
-                <div>
-                    <button type="submit" class="btn-quick">✓ Registra Oggi</button>
-                </div>
-            </form>
-        </div>
-
         <div class="kpi-grid">
             <div class="kpi-box">
                 <span>Cantieri Attivi</span>
@@ -688,76 +585,29 @@
         </div>
     </div>
 
-    <!-- TAB 2: SEGNA GIORNATE & ORE IN PIÙ -->
+    <!-- TAB 2: ASSEGNA SQUADRA AI CANTIERI -->
     <div id="ore" class="section">
-        <div class="grid-2">
-            <!-- INSERIMENTO SQUADRA SELEZIONABILE PER CANTIERE -->
-            <div class="card">
-                <h2>👷‍♂️ Assegna Squadra al Cantiere</h2>
-                <form onsubmit="salvaPresenzeSquadra(event)">
-                    <div class="grid-2" style="gap:10px;">
-                        <div class="form-group">
-                            <label>Data Lavoro</label>
-                            <input type="date" id="squadra-data" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Cantiere</label>
-                            <select id="squadra-cantiere" required onchange="renderizzaListaSquadra()"></select>
-                        </div>
-                    </div>
-                    <span class="help-text" style="margin-bottom: 12px;">Clicca su <strong>❌ Non qui</strong> per attivare l'operaio in questo cantiere (diventa verde <strong>✓ Nel Cantiere</strong>).</span>
-                    <div id="squadra-lista-operai"></div>
-                    <button type="submit" class="btn-primary" style="margin-top: 10px;">✓ Salva Assegnazioni della Giornata</button>
-                </form>
-            </div>
-
-            <!-- INSERIMENTO SINGOLO CON TASTI RAPIDI ORE IN PIÙ -->
-            <div class="card">
-                <h2>⏱️ Segna Operaio Singolo + Ore Extra</h2>
-                <form onsubmit="aggiungiPresenzaSingola(event)">
+        <div class="card">
+            <h2>👷‍♂️ Assegna Presenze Squadra al Cantiere</h2>
+            <form onsubmit="salvaPresenzeSquadra(event)">
+                <div class="grid-2" style="gap:10px; margin-bottom: 15px;">
                     <div class="form-group">
-                        <label>Data</label>
-                        <input type="date" id="ore-data" required>
+                        <label>Data Lavoro</label>
+                        <input type="date" id="squadra-data" required>
                     </div>
                     <div class="form-group">
-                        <label>Cantiere</label>
-                        <select id="ore-cantiere" required></select>
+                        <label>Seleziona Cantiere di Destinazione</label>
+                        <select id="squadra-cantiere" required onchange="renderizzaListaSquadra()"></select>
                     </div>
-                    <div class="form-group">
-                        <label>Operaio</label>
-                        <select id="ore-operaio" required></select>
-                    </div>
-                    <div class="grid-2" style="gap:10px;">
-                        <div class="form-group">
-                            <label>Giornate Lavorate</label>
-                            <select id="ore-giorni">
-                                <option value="1" selected>1 Giornata (8h)</option>
-                                <option value="0.5">0.5 Mezza Giornata (4h)</option>
-                                <option value="0">0 Giornate (Solo Extra)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>+ Ore in più (Extra)</label>
-                            <input type="number" step="0.5" min="0" max="16" id="ore-extra" value="0">
-                            <div class="extra-pills">
-                                <button type="button" class="pill-btn" onclick="aggiungiPillExtra(1)">+1h</button>
-                                <button type="button" class="pill-btn" onclick="aggiungiPillExtra(2)">+2h</button>
-                                <button type="button" class="pill-btn" onclick="aggiungiPillExtra(3)">+3h</button>
-                                <button type="button" class="pill-btn" onclick="document.getElementById('ore-extra').value=0">Reset</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Note lavoro svolto (opzionale)</label>
-                        <input type="text" id="ore-note" placeholder="Es. Gettata pilastri, tramezzi...">
-                    </div>
-                    <button type="submit" class="btn-primary">+ Registra Giornata</button>
-                </form>
-            </div>
+                </div>
+                <span class="help-text" style="margin-bottom: 15px;">1. Scegli il cantiere. 2. Clicca su <strong>❌ Non qui</strong> per attivare l'operaio in questo cantiere (diventa verde <strong>✓ Nel Cantiere</strong>). 3. Inserisci le giornate e le ore extra.</span>
+                <div id="squadra-lista-operai"></div>
+                <button type="submit" class="btn-primary" style="margin-top: 15px;">✓ Salva Assegnazioni della Giornata</button>
+            </form>
         </div>
 
         <div class="card">
-            <h2>📋 Storico Giornate e Ore Extra</h2>
+            <h2>📋 Storico Giornate e Ore Extra Registrate</h2>
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -816,7 +666,7 @@
                     <div class="form-group">
                         <label>Importo Fattura / Materiali (€)</label>
                         <input type="number" step="0.01" id="spesa-importo" placeholder="450.00" required>
-                        <span class="help-text">Cemento, ferro, piastrelle, noleggio ponteggi, smaltimento, ecc.</span>
+                        <span class="help-text">Cemento, ferro, piastrelle, noleggio ponteggi, ecc.</span>
                     </div>
                     <button type="submit" class="btn-primary">Aggiungi Costo Materiali</button>
                 </form>
@@ -889,7 +739,7 @@
                     <div class="form-group">
                         <label>Paga Giornaliera (€ al giorno - 8 ore)</label>
                         <input type="number" step="1" id="op-paga-giorno" placeholder="120" required>
-                        <span class="help-text">Le eventuali ore in più vengono calcolate automaticamente (Paga Giornaliera ÷ 8).</span>
+                        <span class="help-text">Le eventuali ore in più vengono calcolate automaticamente.</span>
                     </div>
                     <button type="submit" class="btn-primary">+ Salva Operaio</button>
                 </form>
@@ -980,7 +830,6 @@
     const oggiISO = oggiObj.toISOString().slice(0, 10);
     const meseCorrenteISO = oggiObj.toISOString().slice(0, 7);
 
-    document.getElementById('ore-data').value = oggiISO;
     document.getElementById('squadra-data').value = oggiISO;
     document.getElementById('filtro-mese').value = meseCorrenteISO;
 
@@ -994,7 +843,7 @@
     // --- GESTIONE LOGIN / UTENTE CON PIN ---
     function eseguiLogin(e) {
         e.preventDefault();
-        const nome = document.getElementById('auth-nome').value.trim();
+        const nome = document.getElementById('auth-nome').value.trim().toLowerCase();
         const pin = document.getElementById('auth-pin').value.trim();
 
         if (!nome || !pin) return alert('Inserisci nome e PIN.');
@@ -1006,7 +855,6 @@
         if (savedData) {
             db = JSON.parse(savedData);
         } else {
-            // Profilo nuovo
             db = { operai: [], cantieri: [], presenze: [], documenti: [] };
             salvaDB();
         }
@@ -1014,7 +862,7 @@
         document.getElementById('header-user-badge').innerText = `👤 ${nome}`;
         document.getElementById('auth-screen').style.display = 'none';
         aggiornaUI();
-        mostraToast(`Benvenuto, ${nome}!`);
+        mostraToast(`Bentornato, ${nome}!`);
     }
 
     function esciProfilo() {
@@ -1048,11 +896,6 @@
         return `${d}/${m}/${y}`;
     }
 
-    function aggiungiPillExtra(ore) {
-        const inp = document.getElementById('ore-extra');
-        inp.value = (parseFloat(inp.value) || 0) + ore;
-    }
-
     function aggiornaAnteprimaOreCantiere() {
         const gg = parseFloat(document.getElementById('cant-giorni-stimati').value) || 0;
         document.getElementById('anteprima-ore-richieste').innerText = `Pari a ${gg * ORE_PER_GIORNO} ore totali di manodopera.`;
@@ -1073,21 +916,11 @@
         const g1 = `${meseStr}-02`;
         const g2 = `${meseStr}-03`;
         const g3 = `${meseStr}-04`;
-        const g4 = `${meseStr}-05`;
-
-        const dataScaduta = new Date();
-        dataScaduta.setDate(oggi.getDate() - 4);
-
-        const dataUrgente7gg = new Date();
-        dataUrgente7gg.setDate(oggi.getDate() + 5);
-
-        const dataAvviso25gg = new Date();
-        dataAvviso25gg.setDate(oggi.getDate() + 22);
 
         db = {
             operai: [
                 { id: 101, nome: "Marco Bianchi", ruolo: "Capocantiere", pagaGiornaliera: 160.00 },
-                { id: 102, nome: "Giuseppe Neri", ruolo: "Muratore Specializzato", pagaGiornaliera: 128.00 },
+                { id: 102, nome: "Giuseppe Neri", ruolo: "Muratore", pagaGiornaliera: 128.00 },
                 { id: 103, nome: "Luca Rossi", ruolo: "Manovale", pagaGiornaliera: 104.00 }
             ],
             cantieri: [
@@ -1095,58 +928,18 @@
                 { id: 202, nome: "Rifacimento Tetto Condominio Sole", ricavo: 9500.00, materiali: 4200.00, giorniStimati: 45 }
             ],
             presenze: [
-                { id: 301, data: g1, cantiereId: 201, operaioId: 101, giorni: 1, oreExtra: 2, costoTotale: 200.00, note: "Direzione + tracciamento" },
-                { id: 302, data: g2, cantiereId: 201, operaioId: 101, giorni: 1, oreExtra: 0, costoTotale: 160.00, note: "Controllo gettata" },
-                { id: 303, data: g1, cantiereId: 201, operaioId: 102, giorni: 1, oreExtra: 1, costoTotale: 144.00, note: "Posa tramezzi" },
-                { id: 304, data: g2, cantiereId: 201, operaioId: 102, giorni: 1, oreExtra: 0, costoTotale: 128.00, note: "Intonaci" },
-                { id: 305, data: g3, cantiereId: 202, operaioId: 102, giorni: 1, oreExtra: 2, costoTotale: 160.00, note: "Smontaggio tegole" },
-                { id: 306, data: g4, cantiereId: 202, operaioId: 102, giorni: 1, oreExtra: 0, costoTotale: 128.00, note: "Guaina tetto" },
-                { id: 307, data: g3, cantiereId: 202, operaioId: 103, giorni: 1, oreExtra: 2, costoTotale: 130.00, note: "Movimentazione" },
-                { id: 308, data: g4, cantiereId: 202, operaioId: 103, giorni: 0.5, oreExtra: 0, costoTotale: 52.00, note: "Mezza giornata pulizia" }
+                { id: 301, data: g1, cantiereId: 201, operaioId: 101, giorni: 1, oreExtra: 2, costoTotale: 200.00, note: "Assegnazione squadra" },
+                { id: 302, data: g2, cantiereId: 201, operaioId: 102, giorni: 1, oreExtra: 1, costoTotale: 144.00, note: "Assegnazione squadra" },
+                { id: 303, data: g3, cantiereId: 202, operaioId: 103, giorni: 1, oreExtra: 0, costoTotale: 104.00, note: "Assegnazione squadra" }
             ],
             documenti: [
-                { id: 401, operaioId: 101, tipo: "Visita Medica / Idoneità", scadenza: dataUrgente7gg.toISOString().slice(0, 10) },
-                { id: 402, operaioId: 102, tipo: "Corso Sicurezza (Art. 37)", scadenza: dataScaduta.toISOString().slice(0, 10) },
-                { id: 403, operaioId: 103, tipo: "Patentino Gru / Mezzi", scadenza: dataAvviso25gg.toISOString().slice(0, 10) }
+                { id: 401, operaioId: 101, tipo: "Visita Medica / Idoneità", scadenza: "2026-12-31" }
             ]
         };
 
         salvaDB();
+        renderizzaListaSquadra();
         mostraToast('💡 Dati di esempio caricati!');
-    }
-
-    // --- REGISTRAZIONE RAPIDA 1-CLICK ---
-    function registraRapido(e) {
-        e.preventDefault();
-        const cantId = Number(document.getElementById('quick-cantiere').value);
-        const opId = Number(document.getElementById('quick-operaio').value);
-        const giorni = parseFloat(document.getElementById('quick-giorni').value) || 0;
-        const oreExtra = parseFloat(document.getElementById('quick-extra').value) || 0;
-        const operaio = db.operai.find(o => o.id === opId);
-
-        if (!cantId || !operaio) {
-            return alert('Crea prima almeno un cantiere e un operaio!');
-        }
-        if (giorni === 0 && oreExtra === 0) {
-            return alert('Seleziona almeno mezza giornata o 1 ora extra.');
-        }
-
-        const costo = calcolaCostoPresenza(operaio.pagaGiornaliera, giorni, oreExtra);
-
-        db.presenze.unshift({
-            id: Date.now(),
-            data: new Date().toISOString().slice(0, 10),
-            cantiereId: cantId,
-            operaioId: opId,
-            giorni: giorni,
-            oreExtra: oreExtra,
-            costoTotale: costo,
-            note: 'Registrazione rapida'
-        });
-
-        document.getElementById('quick-extra').value = 0;
-        salvaDB();
-        mostraToast(`✓ Registrato: ${giorni} gg + ${oreExtra}h extra per ${operaio.nome}`);
     }
 
     // --- GESTIONE TOGGLE PRESENZA SQUADRA ---
@@ -1230,40 +1023,11 @@
             }
         });
 
-        if (registrati === 0) return alert('Seleziona almeno un operaio (mettendolo in verde) e inserisci le giornate o ore extra.');
+        if (registrati === 0) return alert('Seleziona almeno un operaio (mettendolo in verde) e inserisci le giornate.');
         
         salvaDB();
         renderizzaListaSquadra();
-        mostraToast(`✓ Salvate presenze per ${registrati} operai in questo cantiere!`);
-    }
-
-    // --- PRESENZA SINGOLA ---
-    function aggiungiPresenzaSingola(e) {
-        e.preventDefault();
-        const opId = Number(document.getElementById('ore-operaio').value);
-        const cantId = Number(document.getElementById('ore-cantiere').value);
-        const operaio = db.operai.find(o => o.id === opId);
-        const giorni = parseFloat(document.getElementById('ore-giorni').value) || 0;
-        const oreExtra = parseFloat(document.getElementById('ore-extra').value) || 0;
-
-        if (!operaio) return alert('Seleziona un operaio valido.');
-        if (giorni === 0 && oreExtra === 0) return alert('Inserisci almeno mezza giornata o 1 ora extra.');
-
-        db.presenze.unshift({
-            id: Date.now(),
-            data: document.getElementById('ore-data').value,
-            cantiereId: cantId,
-            operaioId: opId,
-            giorni: giorni,
-            oreExtra: oreExtra,
-            costoTotale: calcolaCostoPresenza(operaio.pagaGiornaliera, giorni, oreExtra),
-            note: document.getElementById('ore-note').value.trim()
-        });
-
-        document.getElementById('ore-extra').value = 0;
-        document.getElementById('ore-note').value = '';
-        salvaDB();
-        mostraToast('📅 Giornata registrata!');
+        mostraToast(`✓ Salvate presenze per ${registrati} operai!`);
     }
 
     function eliminaPresenza(id) {
@@ -1373,7 +1137,7 @@
             ? db.cantieri.map(c => `<option value="${c.id}">${c.nome}</option>`).join('')
             : '<option value="">-- Crea prima un cantiere --</option>';
 
-        ['ore-cantiere', 'spesa-cantiere', 'quick-cantiere', 'squadra-cantiere'].forEach(id => {
+        ['spesa-cantiere', 'squadra-cantiere'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 const valPrecedente = el.value;
@@ -1386,7 +1150,7 @@
             ? db.operai.map(o => `<option value="${o.id}">${o.nome} (${formatEuro(o.pagaGiornaliera)}/gg)</option>`).join('')
             : '<option value="">-- Aggiungi prima un operaio --</option>';
 
-        ['ore-operaio', 'doc-operaio', 'quick-operaio'].forEach(id => {
+        ['doc-operaio'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.innerHTML = optOperai;
         });
@@ -1568,6 +1332,7 @@
                 if (imported.operai && imported.cantieri && imported.presenze && imported.documenti) {
                     db = imported;
                     salvaDB();
+                    renderizzaListaSquadra();
                     mostraToast('✅ Backup ripristinato!');
                 } else {
                     alert('File di backup non valido.');
