@@ -317,7 +317,6 @@
             gap: 10px;
         }
 
-        /* Form e Aiuti Contestuali */
         .form-group {
             margin-bottom: 14px;
             text-align: left;
@@ -380,7 +379,6 @@
             font-weight: 600;
         }
 
-        /* Tabelle ed Evidenze Visive */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -436,7 +434,6 @@
             animation: pulseUrgent 1.8s infinite;
         }
 
-        /* KPI Dashboard */
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -464,7 +461,6 @@
             display: block;
         }
 
-        /* Riga Assegnazione Squadra al Cantiere */
         .squadra-row {
             display: flex;
             justify-content: space-between;
@@ -592,7 +588,6 @@
 </head>
 <body>
 
-<!-- SCHERMATA LOGIN & PRESENTAZIONE -->
 <div id="auth-screen">
     <div class="hero-intro">
         <h1>Scopri subito se un cantiere ti fa <span>guadagnare o perdere soldi</span>.</h1>
@@ -645,7 +640,6 @@
 
 <div class="container">
 
-    <!-- BANNER MODALITÀ DEMO -->
     <div id="demo-banner" class="demo-banner">
         <div>
             <strong>👀 Stai esplorando la Modalità Demo:</strong> i dati mostrati sono simulati per farti vedere come funziona il sistema.
@@ -823,7 +817,6 @@
 
     <!-- TAB 4: OPERAI, PAGHE MENSILI E SCADENZE -->
     <div id="operai" class="section">
-        <!-- TABELLA PAGHE E GIORNI LAVORATI AL MESE -->
         <div class="card" style="border-top: 4px solid var(--primary);">
             <h2>
                 <span>💶 Paga Fine Mese: Giorni Lavorati, Ore Extra e Totale da Dare</span>
@@ -966,7 +959,6 @@
         setTimeout(() => t.classList.remove('show'), 2500);
     }
 
-    // --- GESTIONE LOGIN / UTENTE CON PIN ---
     function eseguiLogin(e) {
         e.preventDefault();
         const nomeRaw = document.getElementById('auth-nome').value.trim();
@@ -993,7 +985,6 @@
         mostraToast(`Bentornato, ${nomeRaw}!`);
     }
 
-    // --- MODALITÀ DEMO IMMEDIATA ---
     function avviaModalitaDemo() {
         isDemoMode = true;
         currentUser = { nome: 'demo', display: 'Modalità Demo', pin: '0000' };
@@ -1108,7 +1099,6 @@
         return (giorni * pagaGiornaliera) + (oreExtra * pagaOraria);
     }
 
-    // --- GESTIONE TOGGLE PRESENZA SQUADRA ---
     function togglePresenzaOperaio(btn) {
         const row = btn.closest('.squadra-row');
         const isPresente = row.classList.toggle('presente');
@@ -1153,7 +1143,6 @@
         `).join('') : '<p class="empty-msg">Aggiungi prima gli operai nella scheda "Operai, Paghe & Scadenze".</p>';
     }
 
-    // --- PRESENZE SQUADRA IN BLOCCO ---
     function salvaPresenzeSquadra(e) {
         e.preventDefault();
         const data = document.getElementById('squadra-data').value;
@@ -1201,7 +1190,6 @@
         salvaDB();
     }
 
-    // --- OPERAI ---
     function aggiungiOperaio(e) {
         e.preventDefault();
         db.operai.push({
@@ -1223,7 +1211,6 @@
         renderizzaListaSquadra();
     }
 
-    // --- CANTIERI & PREVISIONE ---
     function aggiungiCantiere(e) {
         e.preventDefault();
         db.cantieri.push({
@@ -1259,7 +1246,6 @@
         salvaDB();
     }
 
-    // --- DOCUMENTI ---
     function aggiungiDocumento(e) {
         e.preventDefault();
         db.documenti.push({
@@ -1295,7 +1281,6 @@
         }
     }
 
-    // --- AGGIORNAMENTO INTERFACCIA ---
     function aggiornaUI() {
         if (!currentUser) return;
 
@@ -1325,7 +1310,6 @@
             renderizzaListaSquadra();
         }
 
-        // --- CALCOLO PAGHE E GIORNI LAVORATI AL MESE ---
         const meseSelezionato = document.getElementById('filtro-mese').value || meseCorrenteISO;
         let totalePagheMeseCorrente = 0;
 
@@ -1350,7 +1334,6 @@
             totalePagheMeseCorrente += x.costoTotale;
         });
 
-        // Tabella Anagrafica Operai
         document.getElementById('lista-operai').innerHTML = db.operai.length ? db.operai.map(o => {
             const ggStorici = db.presenze.filter(x => x.operaioId === o.id).reduce((acc, x) => acc + x.giorni, 0);
             const valOra = o.pagaGiornaliera / ORE_PER_GIORNO;
@@ -1364,7 +1347,6 @@
             </tr>`;
         }).join('') : '<tr><td colspan="6" class="empty-msg">Nessun operaio inserito.</td></tr>';
 
-        // Tabella Documenti & Allerte
         let countAllerte = 0;
         let htmlAllerte = '';
         const docsOrdinati = [...db.documenti].sort((a, b) => new Date(a.scadenza) - new Date(b.scadenza));
@@ -1395,7 +1377,6 @@
 
         document.getElementById('dash-scadenze-list').innerHTML = htmlAllerte || '<tr><td colspan="4" class="empty-msg">✅ Tutti i documenti sono in regola!</td></tr>';
 
-        // --- TABELLA CANTIERI & PREVISIONE SU TEMPO RICHIESTO ---
         let previsioneUtileComplessivo = 0;
         let htmlDashCantieri = '';
 
@@ -1452,7 +1433,6 @@
 
         document.getElementById('dash-cantieri-list').innerHTML = htmlDashCantieri || '<tr><td colspan="5" class="empty-msg">Nessun cantiere attivo.</td></tr>';
 
-        // Tabella Storico Presenze
         document.getElementById('lista-ore').innerHTML = db.presenze.length ? db.presenze.map(r => {
             const op = db.operai.find(o => o.id === r.operaioId);
             const cant = db.cantieri.find(c => c.id === r.cantiereId);
@@ -1468,7 +1448,6 @@
             </tr>`;
         }).join('') : '<tr><td colspan="7" class="empty-msg">Nessuna giornata registrata.</td></tr>';
 
-        // Aggiorna KPI Dashboard
         document.getElementById('kpi-cantieri').innerText = db.cantieri.length;
         document.getElementById('kpi-paghe-mese').innerText = formatEuro(totalePagheMeseCorrente);
         const kpiUtileEl = document.getElementById('kpi-utile');
@@ -1477,7 +1456,6 @@
         document.getElementById('kpi-scadenze').innerText = countAllerte;
     }
 
-    // --- BACKUP JSON ---
     function esportaDati() {
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
         const downloadAnchor = document.createElement('a');
