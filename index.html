@@ -119,12 +119,12 @@
 
         .auth-actions {
             display: grid;
-            grid-template-columns: 1fr 1.15fr;
+            grid-template-columns: 1fr 1.25fr;
             gap: 10px;
             margin-top: 12px;
         }
 
-        @media (max-width: 460px) {
+        @media (max-width: 480px) {
             .auth-actions {
                 grid-template-columns: 1fr;
             }
@@ -221,6 +221,7 @@
         .btn-logout {
             background: #7f1d1d;
         }
+
         .btn-logout:hover {
             background: #991b1b;
         }
@@ -422,7 +423,6 @@
         .badge-ok { background: #dcfce7; color: var(--success); }
         .badge-warn { background: #fef3c7; color: var(--warning); }
         .badge-danger { background: #fee2e2; color: var(--danger); }
-        .badge-info { background: #e0f2fe; color: #0369a1; }
 
         @keyframes pulseUrgent {
             0% { opacity: 1; }
@@ -763,8 +763,8 @@
                     <div class="grid-2" style="gap:10px;">
                         <div class="form-group">
                             <label>Tempo Richiesto (Giorni di lavoro)</label>
-                            <input type="number" step="1" min="1" id="cant-giorni-stimati" placeholder="30" oninput="aggiornaAnteprimaOreCantiere()" required>
-                            <span class="help-text" id="anteprima-ore-richieste">Pari a 0 ore totali di manodopera.</span>
+                            <input type="number" step="1" min="1" id="cant-giorni-stimati" placeholder="30" required>
+                            <span class="help-text">Calcolato su giornate standard da 8 ore.</span>
                         </div>
                         <div class="form-group">
                             <label>Materiali Iniziali (€)</label>
@@ -1089,11 +1089,6 @@
         return `${d}/${m}/${y}`;
     }
 
-    function aggiornaAnteprimaOreCantiere() {
-        const gg = parseFloat(document.getElementById('cant-giorni-stimati').value) || 0;
-        document.getElementById('anteprima-ore-richieste').innerText = `Pari a ${gg * ORE_PER_GIORNO} ore totali di manodopera.`;
-    }
-
     function calcolaCostoPresenza(pagaGiornaliera, giorni, oreExtra) {
         const pagaOraria = pagaGiornaliera / ORE_PER_GIORNO;
         return (giorni * pagaGiornaliera) + (oreExtra * pagaOraria);
@@ -1222,7 +1217,6 @@
         });
         e.target.reset();
         document.getElementById('cant-materiali').value = 0;
-        aggiornaAnteprimaOreCantiere();
         salvaDB();
         mostraToast('🏢 Cantiere creato!');
     }
@@ -1266,9 +1260,9 @@
 
     function statoScadenza(dataStr) {
         const oggi = new Date();
-        oggi.setHours(0,0,0,0);
-        const scad = new Date(dataStr);
-        const diffGiorni = Math.ceil((scad - oggi) / (1000 * 60 * 60 * 24));
+        oggi.setHours(0, 0, 0, 0);
+        const scad = new Date(dataStr + 'T00:00:00');
+        const diffGiorni = Math.round((scad - oggi) / (1000 * 60 * 60 * 24));
 
         if (diffGiorni < 0) {
             return { testo: `SCADUTO da ${Math.abs(diffGiorni)} gg`, classe: 'badge-danger badge-pulse', allerta: true, urgente: true };
@@ -1293,7 +1287,9 @@
             if (el) {
                 const valPrecedente = el.value;
                 el.innerHTML = optCantieri;
-                if (valPrecedente) el.value = valPrecedente;
+                if (valPrecedente && db.cantieri.some(c => String(c.id) === valPrecedente)) {
+                    el.value = valPrecedente;
+                }
             }
         });
 
@@ -1457,10 +1453,11 @@
     }
 
     function esportaDati() {
+        const nomeFile = currentUser ? currentUser.nome : 'archivio';
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
         const downloadAnchor = document.createElement('a');
         downloadAnchor.setAttribute("href", dataStr);
-        downloadAnchor.setAttribute("download", `backup_cantiere_${currentUser.nome}_${new Date().toISOString().slice(0,10)}.json`);
+        downloadAnchor.setAttribute("download", `backup_cantiere_${nomeFile}_${new Date().toISOString().slice(0,10)}.json`);
         document.body.appendChild(downloadAnchor);
         downloadAnchor.click();
         downloadAnchor.remove();
@@ -1484,6 +1481,7 @@
             } catch (err) {
                 alert('Errore nella lettura del file.');
             }
+            event.target.value = '';
         };
         reader.readAsText(file);
     }
