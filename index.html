@@ -945,9 +945,16 @@
         documenti: []
     };
 
+    function getLocalISODate(dateObj = new Date()) {
+        const y = dateObj.getFullYear();
+        const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const d = String(dateObj.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
     const oggiObj = new Date();
-    const oggiISO = oggiObj.toISOString().slice(0, 10);
-    const meseCorrenteISO = oggiObj.toISOString().slice(0, 7);
+    const oggiISO = getLocalISODate(oggiObj);
+    const meseCorrenteISO = oggiISO.slice(0, 7);
 
     document.getElementById('squadra-data').value = oggiISO;
     document.getElementById('filtro-mese').value = meseCorrenteISO;
@@ -990,12 +997,11 @@
         currentUser = { nome: 'demo', display: 'Modalità Demo', pin: '0000' };
 
         const oggi = new Date();
-        const meseStr = oggi.toISOString().slice(0, 7);
-        const g1 = `${meseStr}-02`;
-        const g2 = `${meseStr}-03`;
-        const g3 = `${meseStr}-04`;
+        const meseStr = getLocalISODate(oggi).slice(0, 7);
+        const g1 = `${meseStr}-01`;
+        const g2 = `${meseStr}-02`;
 
-        const scadenzaTra12Giorni = new Date();
+        const scadenzaTra12Giorni = new Date(oggi);
         scadenzaTra12Giorni.setDate(oggi.getDate() + 12);
 
         db = {
@@ -1010,12 +1016,12 @@
             ],
             presenze: [
                 { id: 301, data: g1, cantiereId: 201, operaioId: 101, giorni: 1, oreExtra: 2, costoTotale: 200.00, note: "Tracciamento e direzione" },
-                { id: 302, data: g2, cantiereId: 201, operaioId: 102, giorni: 1, oreExtra: 1, costoTotale: 144.00, note: "Demolizione tramezzi" },
-                { id: 303, data: g3, cantiereId: 202, operaioId: 102, giorni: 1, oreExtra: 2, costoTotale: 160.00, note: "Rimozione tegole" },
-                { id: 304, data: g3, cantiereId: 202, operaioId: 103, giorni: 1, oreExtra: 1, costoTotale: 117.00, note: "Scarico materiale" }
+                { id: 302, data: g1, cantiereId: 201, operaioId: 102, giorni: 1, oreExtra: 1, costoTotale: 144.00, note: "Demolizione tramezzi" },
+                { id: 303, data: g2, cantiereId: 202, operaioId: 102, giorni: 1, oreExtra: 2, costoTotale: 160.00, note: "Rimozione tegole" },
+                { id: 304, data: g2, cantiereId: 202, operaioId: 103, giorni: 1, oreExtra: 1, costoTotale: 117.00, note: "Scarico materiale" }
             ],
             documenti: [
-                { id: 401, operaioId: 101, tipo: "Visita Medica / Idoneità", scadenza: scadenzaTra12Giorni.toISOString().slice(0, 10) }
+                { id: 401, operaioId: 101, tipo: "Visita Medica / Idoneità", scadenza: getLocalISODate(scadenzaTra12Giorni) }
             ]
         };
 
@@ -1457,7 +1463,7 @@
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
         const downloadAnchor = document.createElement('a');
         downloadAnchor.setAttribute("href", dataStr);
-        downloadAnchor.setAttribute("download", `backup_cantiere_${nomeFile}_${new Date().toISOString().slice(0,10)}.json`);
+        downloadAnchor.setAttribute("download", `backup_cantiere_${nomeFile}_${getLocalISODate()}.json`);
         document.body.appendChild(downloadAnchor);
         downloadAnchor.click();
         downloadAnchor.remove();
